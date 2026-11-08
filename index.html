@@ -1,0 +1,2005 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>2026 中東地緣政治戰略地圖 | 電腦版與手機版雙介面儀表板</title>
+
+  <!-- Leaflet.js 地圖核心庫 (開源、免費且流暢) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    /* ==========================================================================
+       1. 全域變數、色彩系統與 CSS Reset
+       ========================================================================== */
+    :root {
+      --gm-blue: #1a73e8;
+      --gm-blue-hover: #1557b0;
+      --gm-surface: #ffffff;
+      --gm-surface-variant: #f8f9fa;
+      --gm-text-primary: #202124;
+      --gm-text-secondary: #5f6368;
+      --gm-border: #dadce0;
+      --gm-shadow: 0 1px 3px rgba(60,64,67,0.25), 0 4px 8px 3px rgba(60,64,67,0.12);
+      --gm-shadow-lg: 0 4px 12px rgba(60,64,67,0.28), 0 10px 24px 6px rgba(60,64,67,0.15);
+
+      /* 陣營色彩 (符合 Google Material 語意色彩) */
+      --shia-color: #d93025;      /* 什葉派紅 */
+      --shia-bg: #fce8e6;
+      --sunni-color: #188038;     /* 遜尼派綠 */
+      --sunni-bg: #e6f4ea;
+      --us-color: #f29900;        /* 美軍琥珀金 */
+      --us-bg: #fef7e0;
+      --choke-color: #1a73e8;     /* 咽喉海峽藍 */
+      --choke-bg: #e8f0fe;
+
+      /* 安全區域墊距 (針對行動裝置異形螢幕 Notch / Home Bar) */
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+
+      --font-family: -apple-system, BlinkMacSystemFont, "Google Sans", "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: var(--font-family);
+      color: var(--gm-text-primary);
+      background: #1e293b;
+      touch-action: manipulation;
+    }
+
+    /* ==========================================================================
+       2. 頂部全域模式切換列 (電腦版 vs 手機版切換按鈕)
+       ========================================================================== */
+    .global-mode-switcher-bar {
+      position: fixed;
+      top: 10px;
+      right: 14px;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 5px 8px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      transition: all 0.3s ease;
+    }
+
+    .mode-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+
+    .mode-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .mode-btn.active {
+      background: var(--gm-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.45);
+    }
+
+    .mode-btn .btn-icon {
+      font-size: 1rem;
+    }
+
+    /* 手機版模擬外框切換按鈕 (僅在桌機上切換為手機版時顯示) */
+    .frame-toggle-btn {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .frame-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       3. 核心容器結構 (App Viewport & Layout Modes)
+       ========================================================================== */
+    #rootContainer {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: #0f172a;
+    }
+
+    /* 主視窗容器：可變形為桌機滿版，或手機模擬外殼 */
+    #appViewport {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #e5e3df;
+      overflow: hidden;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-radius 0.35s ease,
+                  box-shadow 0.35s ease;
+    }
+
+    /* 地圖容器 */
+    #map {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* ==========================================================================
+       4. 電腦版專屬介面 (Desktop UI Mode)
+       ========================================================================== */
+    .mode-desktop #appViewport {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+    }
+
+    /* 隱藏手機端專屬元素 */
+    .mode-desktop .mobile-only {
+      display: none !important;
+    }
+
+    /* 電腦端頂部浮動搜尋卡片與篩選列 */
+    .desktop-top-bar {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      max-width: 460px;
+    }
+    .desktop-top-bar > * {
+      pointer-events: auto;
+    }
+
+    .desktop-search-card {
+      background: var(--gm-surface);
+      border-radius: 28px;
+      box-shadow: var(--gm-shadow);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      transition: box-shadow 0.25s ease;
+    }
+    .desktop-search-card:hover {
+      box-shadow: var(--gm-shadow-lg);
+    }
+    .desktop-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      color: var(--gm-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .desktop-search-text {
+      flex: 1;
+    }
+    .desktop-search-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #202124;
+    }
+    .desktop-search-subtitle {
+      font-size: 0.72rem;
+      color: var(--gm-text-secondary);
+    }
+    .desktop-quick-select {
+      border: 1px solid var(--gm-border);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      background: #f8f9fa;
+      color: var(--gm-text-primary);
+      cursor: pointer;
+      outline: none;
+      font-weight: 600;
+      max-width: 140px;
+    }
+
+    /* 電腦版晶片列 */
+    .desktop-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .desktop-chip-btn {
+      background: var(--gm-surface);
+      border: 1px solid var(--gm-border);
+      border-radius: 9999px;
+      padding: 7px 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gm-text-secondary);
+      box-shadow: 0 1px 3px rgba(60,64,67,0.18);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .desktop-chip-btn:hover {
+      background: #f8f9fa;
+      color: var(--gm-text-primary);
+    }
+    .desktop-chip-btn.active[data-filter="all"] {
+      background: #3c4043;
+      color: #fff;
+      border-color: #3c4043;
+    }
+    .desktop-chip-btn.active[data-filter="shia"] {
+      background: var(--shia-bg);
+      color: var(--shia-color);
+      border-color: var(--shia-color);
+    }
+    .desktop-chip-btn.active[data-filter="sunni"] {
+      background: var(--sunni-bg);
+      color: var(--sunni-color);
+      border-color: var(--sunni-color);
+    }
+    .desktop-chip-btn.active[data-filter="us-military"] {
+      background: var(--us-bg);
+      color: #b06000;
+      border-color: var(--us-color);
+    }
+
+    /* 電腦端左側側邊情報抽屜 (Desktop Left Sheet) */
+    .desktop-side-sheet {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 430px;
+      height: 100%;
+      background: var(--gm-surface);
+      box-shadow: var(--gm-shadow-lg);
+      z-index: 1050;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-105%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .desktop-side-sheet.open {
+      transform: translateX(0);
+    }
+
+    /* 電腦版底圖風格切換列與圖例 */
+    .desktop-bottom-left {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 990;
+      background: var(--gm-surface);
+      border-radius: 20px;
+      box-shadow: var(--gm-shadow);
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .desktop-style-btn {
+      background: none;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gm-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .desktop-style-btn.active {
+      background: #e8f0fe;
+      color: var(--gm-blue);
+    }
+
+    .desktop-bottom-right {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 990;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .desktop-bottom-right > * {
+      pointer-events: auto;
+    }
+    .desktop-legend-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      box-shadow: var(--gm-shadow);
+      padding: 12px 16px;
+      font-size: 0.78rem;
+      min-width: 260px;
+    }
+    .legend-title {
+      font-weight: 800;
+      color: #3c4043;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #f1f3f4;
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      color: #5f6368;
+    }
+    .legend-color-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       5. 手機版專屬介面 (Mobile UI Mode - 專為手機重構之流體介面)
+       ========================================================================== */
+    /* 隱藏電腦版專屬元素 */
+    .mode-mobile .desktop-only {
+      display: none !important;
+    }
+
+    /* 當在桌機畫面上切換為「手機版」時，模擬高階智慧型手機外殼 (iPhone 16 Pro Mockup) */
+    @media (min-width: 769px) {
+      .mode-mobile.with-frame #appViewport {
+        width: 395px;
+        height: 844px;
+        max-height: calc(100vh - 40px);
+        border-radius: 46px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.65), 0 0 0 10px #1e293b, 0 0 0 12px #334155;
+        position: relative;
+      }
+      .mode-mobile.with-frame .frame-toggle-btn {
+        display: inline-flex;
+      }
+      .mode-mobile.no-frame #appViewport {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+      }
+      .mode-mobile.no-frame .frame-toggle-btn {
+        display: inline-flex;
+      }
+    }
+
+    /* 真正行動裝置 (螢幕寬度小於 768px) 自動滿版 */
+    @media (max-width: 768px) {
+      .mode-mobile #appViewport {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .frame-toggle-btn {
+        display: none !important;
+      }
+    }
+
+    /* 模擬手機頂部動態島 / 瀏海與狀態列 (僅在桌機模擬外框時顯現) */
+    .mobile-mockup-status-bar {
+      display: none;
+    }
+    @media (min-width: 769px) {
+      .mode-mobile.with-frame .mobile-mockup-status-bar {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 44px;
+        z-index: 2000;
+        padding: 0 20px;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        pointer-events: none;
+      }
+      .mobile-dynamic-island {
+        width: 110px;
+        height: 26px;
+        background: #000;
+        border-radius: 20px;
+        margin: 0 auto;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 10px;
+      }
+    }
+
+    /* 手機端頂部懸浮控制艙 (Mobile Top Island) */
+    .mobile-top-container {
+      position: absolute;
+      top: calc(10px + var(--sat));
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .mobile-top-container > * {
+      pointer-events: auto;
+    }
+
+    /* 手機版搜尋膠囊 */
+    .mobile-search-pill {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      box-shadow: 0 2px 10px rgba(60,64,67,0.18);
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mobile-brand-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      color: var(--gm-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .mobile-search-info {
+      flex: 1;
+      overflow: hidden;
+    }
+    .mobile-search-main {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #202124;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mobile-search-sub {
+      font-size: 0.65rem;
+      color: var(--gm-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mobile-quick-jump-select {
+      background: #f1f3f4;
+      border: 1px solid var(--gm-border);
+      border-radius: 16px;
+      padding: 5px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #202124;
+      outline: none;
+      max-width: 105px;
+    }
+
+    /* 手機版橫向滑動晶片列 (Touch Horizontal Scroll) */
+    .mobile-chips-scroll {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 2px 4px 2px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mobile-chips-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .mobile-chip-btn {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 9999px;
+      padding: 5px 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--gm-text-secondary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .mobile-chip-btn.active[data-filter="all"] {
+      background: #202124;
+      color: #fff;
+    }
+    .mobile-chip-btn.active[data-filter="shia"] {
+      background: var(--shia-bg);
+      color: var(--shia-color);
+      border-color: var(--shia-color);
+    }
+    .mobile-chip-btn.active[data-filter="sunni"] {
+      background: var(--sunni-bg);
+      color: var(--sunni-color);
+      border-color: var(--sunni-color);
+    }
+    .mobile-chip-btn.active[data-filter="us-military"] {
+      background: var(--us-bg);
+      color: #b06000;
+      border-color: var(--us-color);
+    }
+
+    /* 手機版地圖右側懸浮快捷工具鈕 (FABs) */
+    .mobile-floating-tools {
+      position: absolute;
+      top: calc(100px + var(--sat));
+      right: 12px;
+      z-index: 990;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-fab-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      color: #3c4043;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mobile-fab-btn:active {
+      transform: scale(0.92);
+      background: #f1f3f4;
+    }
+
+    /* 手機版底部地標快捷滑動 Dock (Quick Focus Dock) */
+    .mobile-focus-dock {
+      position: absolute;
+      bottom: calc(85px + var(--sab));
+      left: 10px;
+      right: 10px;
+      z-index: 995;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      pointer-events: auto;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .mobile-focus-dock::-webkit-scrollbar {
+      display: none;
+    }
+    .dock-pill {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 18px;
+      padding: 5px 11px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #202124;
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .dock-pill:active {
+      transform: scale(0.94);
+    }
+    .dock-pill.active {
+      background: var(--gm-blue);
+      color: #fff;
+      border-color: var(--gm-blue);
+    }
+
+    /* 手機版三段式底部抽屜 (Google Maps 3-Stage Bottom Sheet) */
+    .mobile-bottom-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 88dvh;
+      background: var(--gm-surface);
+      border-radius: 22px 22px 0 0;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+      z-index: 1050;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(calc(88dvh - 80px - var(--sab))); /* 預設 Peek 狀態 */
+      transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1);
+      padding-bottom: var(--sab);
+    }
+
+    /* 抽屜三種狀態 */
+    .mobile-bottom-sheet.state-peek {
+      transform: translateY(calc(88dvh - 80px - var(--sab)));
+    }
+    .mobile-bottom-sheet.state-half {
+      transform: translateY(42dvh);
+    }
+    .mobile-bottom-sheet.state-full {
+      transform: translateY(0);
+    }
+
+    /* 手機抽屜拖曳指示條 */
+    .mobile-sheet-handle-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 0 4px 0;
+      cursor: grab;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+    .mobile-handle-pill {
+      width: 36px;
+      height: 4px;
+      border-radius: 9999px;
+      background: #dadce0;
+    }
+
+    /* 手機抽屜頂部 Banner (緊湊設計) */
+    .mobile-sheet-head {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #fff;
+      padding: 10px 14px 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .mobile-head-left {
+      flex: 1;
+      overflow: hidden;
+    }
+    .mobile-head-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .mobile-head-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mobile-expand-indicator {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #fff;
+      transition: transform 0.3s;
+    }
+    .mobile-bottom-sheet.state-full .mobile-expand-indicator {
+      transform: rotate(180deg);
+    }
+
+    /* 抽屜內 Peek 預覽簡評 (收合時也能一目了然) */
+    .mobile-peek-snippet {
+      padding: 4px 14px 6px 14px;
+      font-size: 0.74rem;
+      color: #5f6368;
+      background: #f8f9fa;
+      border-bottom: 1px solid #edf2f7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+
+    /* 手機抽屜滾動內容 */
+    .mobile-sheet-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+      -webkit-overflow-scrolling: touch;
+      line-height: 1.6;
+    }
+
+    /* 手機版情報卡片網格 */
+    .mobile-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .mobile-meta-box {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 8px 10px;
+      border: 1px solid #edf2f7;
+    }
+    .mobile-meta-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--gm-text-secondary);
+      text-transform: uppercase;
+    }
+    .mobile-meta-val {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--gm-text-primary);
+      margin-top: 2px;
+    }
+
+    /* 核心強調文字 (指定必備文本) */
+    .mobile-highlight-box {
+      background: #e8f0fe;
+      border-left: 4px solid var(--gm-blue);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #174ea6;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* 抽屜內標題與段落 */
+    .mobile-sec-header {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--gm-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 14px 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .mobile-sec-header::before {
+      content: "";
+      width: 3px;
+      height: 10px;
+      background: var(--gm-blue);
+      border-radius: 2px;
+    }
+    .mobile-analysis-p {
+      font-size: 0.84rem;
+      color: #3c4043;
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    /* 手機版專屬時間線 */
+    .mobile-timeline {
+      list-style: none;
+      border-left: 2px solid #e8eaed;
+      padding-left: 12px;
+      margin-top: 8px;
+    }
+    .mobile-timeline-item {
+      position: relative;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+    }
+    .mobile-timeline-item::before {
+      content: "";
+      position: absolute;
+      left: -17px;
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gm-blue);
+      border: 2px solid #fff;
+    }
+    .mobile-tl-date {
+      font-weight: 800;
+      color: #174ea6;
+    }
+    .mobile-tl-desc {
+      color: #5f6368;
+    }
+
+    /* 手機版圖例彈出小卡 (可開關) */
+    .mobile-legend-modal {
+      display: none;
+      position: absolute;
+      top: calc(90px + var(--sat));
+      left: 14px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      max-width: 250px;
+    }
+    .mobile-legend-modal.show {
+      display: block;
+    }
+
+    /* ==========================================================================
+       6. Google Maps 自訂標記圖示 (SVG Custom Pin)
+       ========================================================================== */
+    .custom-gm-pin {
+      cursor: pointer;
+    }
+    .gm-pin-container {
+      position: relative;
+    }
+    .gm-pin-svg {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .gm-pin-container:hover .gm-pin-svg,
+    .gm-pin-container:active .gm-pin-svg {
+      transform: translateY(-4px) scale(1.18);
+    }
+    .gm-pin-radar {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: pin-ripple 2s infinite ease-out;
+    }
+    @keyframes pin-ripple {
+      0% { transform: translate(-50%, 50%) scale(0.6); opacity: 1; }
+      100% { transform: translate(-50%, 50%) scale(2.8); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="mode-desktop">
+
+  <!-- ==========================================================================
+       頂部全局切換控制列：電腦版 vs 手機版切換按鈕
+       ========================================================================== -->
+  <header class="global-mode-switcher-bar">
+    <button class="mode-btn active" id="btnModeDesktop" onclick="switchViewMode('desktop')">
+      <span class="btn-icon">🖥️</span>
+      <span>電腦版</span>
+    </button>
+    <button class="mode-btn" id="btnModeMobile" onclick="switchViewMode('mobile')">
+      <span class="btn-icon">📱</span>
+      <span>手機版</span>
+    </button>
+    <button class="frame-toggle-btn" id="btnToggleFrame" onclick="toggleMobileFrame()" title="在桌機上切換手機模擬外框">
+      <span>🔲 外框開關</span>
+    </button>
+  </header>
+
+  <!-- ==========================================================================
+       主視窗容器 (App Viewport)
+       ========================================================================== -->
+  <main id="rootContainer">
+    <div id="appViewport">
+
+      <!-- 模擬智慧型手機頂部外殼元素 (僅在桌機手機版外框模式時顯現) -->
+      <div class="mobile-mockup-status-bar mobile-only">
+        <span>9:41</span>
+        <div class="mobile-dynamic-island"></div>
+        <span>5G 🔋</span>
+      </div>
+
+      <!-- 滿版 Leaflet 地圖畫布 -->
+      <div id="map"></div>
+
+      <!-- ======================================================================
+           A. 電腦版專屬介面元素 (Desktop Mode Elements)
+           ====================================================================== -->
+      <!-- 1. 電腦版頂部懸浮搜尋卡片與篩選列 -->
+      <div class="desktop-top-bar desktop-only">
+        <div class="desktop-search-card">
+          <div class="desktop-brand-icon">🗺️</div>
+          <div class="desktop-search-text">
+            <div class="desktop-search-title">2026 中東地緣政治戰略地圖</div>
+            <div class="desktop-search-subtitle">Axis of the Shia-Sunni Divide • 勢力範圍</div>
+          </div>
+          <select class="desktop-quick-select" id="desktopQuickSelect">
+            <option value="" disabled selected>快速聚焦焦點...</option>
+            <option value="Iran">🇮🇷 伊朗與什葉派權力核心</option>
+            <option value="SaudiArabia">🇸🇦 沙烏地阿拉伯與遜尼派聯盟</option>
+            <option value="StraitOfHormuz">⚓ 荷莫茲海峽咽喉點</option>
+            <option value="Azerbaijan">🇦🇿 亞塞拜然 (3/5 越境襲擊)</option>
+            <option value="Bahrain">🇧🇭 巴林第5艦隊 (3/9 飽和襲擊)</option>
+            <option value="USMed">🚢 東地中海美軍打擊群</option>
+            <option value="USIndian">🌊 印度洋支援梯隊</option>
+            <option value="Syria">🇸🇾 敘利亞新局 (親土政權)</option>
+            <option value="Yemen">🇾🇪 葉門胡塞武裝</option>
+            <option value="Turkey">🇹🇷 土耳其 (《麥加協議》盟友)</option>
+            <option value="Pakistan">🇵🇰 巴基斯坦 (核威懾夥伴)</option>
+            <option value="Egypt">🇪🇬 埃及 (守護蘇伊士)</option>
+          </select>
+        </div>
+
+        <!-- 電腦版陣營篩選晶片列 -->
+        <div class="desktop-chips-row">
+          <button class="desktop-chip-btn active" data-filter="all">全部陣營</button>
+          <button class="desktop-chip-btn" data-filter="shia">🔴 什葉派陣營 (紅)</button>
+          <button class="desktop-chip-btn" data-filter="sunni">🟢 遜尼派陣營 (綠)</button>
+          <button class="desktop-chip-btn" data-filter="us-military">🟡 美軍部署 (金)</button>
+        </div>
+      </div>
+
+      <!-- 2. 電腦版左側滑入式情報側邊欄 (Desktop Left Sheet) -->
+      <aside class="desktop-side-sheet desktop-only" id="desktopSideSheet">
+        <div style="background:linear-gradient(135deg, #1e293b, #0f172a); padding:18px 20px; color:#fff; position:relative;" id="desktopSheetHead">
+          <button id="desktopCloseBtn" style="position:absolute; top:12px; right:14px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.45); border:none; color:#fff; font-size:1.2rem; cursor:pointer;" title="關閉">&times;</button>
+          <div id="desktopSheetTag" style="font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:4px; display:inline-block; margin-bottom:6px;">陣營類別</div>
+          <h2 id="desktopSheetTitle" style="font-size:1.35rem; font-weight:800; line-height:1.25;">地點標題</h2>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding:18px 20px; line-height:1.65;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+            <div style="background:#f8f9fa; border-radius:8px; padding:8px 12px; border:1px solid #edf2f7;">
+              <div style="font-size:0.68rem; font-weight:700; color:#5f6368; text-transform:uppercase;">核心領導階層</div>
+              <div id="desktopSheetLeader" style="font-size:0.86rem; font-weight:700; color:#202124; margin-top:2px;">-</div>
+            </div>
+            <div style="background:#f8f9fa; border-radius:8px; padding:8px 12px; border:1px solid #edf2f7;">
+              <div style="font-size:0.68rem; font-weight:700; color:#5f6368; text-transform:uppercase;">戰略行動焦點</div>
+              <div id="desktopSheetFocus" style="font-size:0.86rem; font-weight:700; color:#202124; margin-top:2px;">-</div>
+            </div>
+          </div>
+
+          <div id="desktopSheetHighlight" style="background:#e8f0fe; border-left:4px solid var(--gm-blue); border-radius:0 8px 8px 0; padding:12px 14px; font-size:0.92rem; font-weight:600; color:#174ea6; margin-bottom:16px;">
+            核心戰略研析內容...
+          </div>
+
+          <div style="font-size:0.82rem; font-weight:800; color:#5f6368; text-transform:uppercase; margin-bottom:6px;">地緣情報與戰略轉向研析</div>
+          <div id="desktopSheetAnalysis" style="font-size:0.88rem; color:#3c4043; line-height:1.68; margin-bottom:16px;"></div>
+
+          <div style="font-size:0.82rem; font-weight:800; color:#5f6368; text-transform:uppercase; margin-bottom:6px;">2026 關鍵軍事行動記要</div>
+          <ul id="desktopSheetTimeline" style="list-style:none; border-left:2px solid #e8eaed; padding-left:14px;"></ul>
+        </div>
+      </aside>
+
+      <!-- 3. 電腦版左下角底圖風格切換 -->
+      <div class="desktop-bottom-left desktop-only">
+        <button class="desktop-style-btn active" data-style="streets">街道地圖</button>
+        <button class="desktop-style-btn" data-style="osm">開源 OSM</button>
+        <button class="desktop-style-btn" data-style="satellite">衛星空照</button>
+      </div>
+
+      <!-- 4. 電腦版右下角圖例 -->
+      <div class="desktop-bottom-right desktop-only">
+        <div class="desktop-legend-card">
+          <div class="legend-title">
+            <span>陣營勢力圖例</span>
+            <span style="font-size:0.7rem; color:#80868b;">2026</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-color-box" style="background:var(--shia-color); border:1px solid #b71c1c;"></div>
+            <span>🔴 什葉派陣營 (伊朗/伊拉克/葉門)</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-color-box" style="background:var(--sunni-color); border:1px solid #0d652d;"></div>
+            <span>🟢 遜尼派聯盟 (沙烏地/海灣/土耳其)</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-color-box" style="background:var(--us-color); border:1px solid #b06000;"></div>
+            <span>🟡 美軍基地與海軍打擊部隊</span>
+          </div>
+          <div class="legend-row">
+            <div class="legend-color-box" style="background:var(--choke-color); border:1px solid #1557b0;"></div>
+            <span>🔵 戰略咽喉 (荷莫茲) / 前線 (亞塞拜然)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ======================================================================
+           B. 手機版專屬介面元素 (Mobile Mode Elements - 專為手機重構)
+           ====================================================================== -->
+      <!-- 1. 手機端頂部懸浮控制艙 -->
+      <div class="mobile-top-container mobile-only">
+        <div class="mobile-search-pill">
+          <div class="mobile-brand-badge">📍</div>
+          <div class="mobile-search-info">
+            <div class="mobile-search-main">2026 中東戰情地圖</div>
+            <div class="mobile-search-sub">Shia-Sunni Divide • 勢力範圍</div>
+          </div>
+          <select class="mobile-quick-jump-select" id="mobileQuickSelect">
+            <option value="" disabled selected>快速跳轉...</option>
+            <option value="Iran">🇮🇷 伊朗</option>
+            <option value="SaudiArabia">🇸🇦 沙烏地</option>
+            <option value="StraitOfHormuz">⚓ 荷莫茲</option>
+            <option value="Azerbaijan">🇦🇿 亞塞拜然</option>
+            <option value="Bahrain">🇧🇭 巴林第5艦隊</option>
+            <option value="Syria">🇸🇾 敘利亞</option>
+            <option value="Yemen">🇾🇪 葉門</option>
+            <option value="Turkey">🇹🇷 土耳其</option>
+            <option value="Pakistan">🇵🇰 巴基斯坦</option>
+            <option value="Egypt">🇪🇬 埃及</option>
+          </select>
+        </div>
+
+        <!-- 陣營篩選標籤 (橫向滑動) -->
+        <div class="mobile-chips-scroll">
+          <button class="mobile-chip-btn active" data-filter="all">全部</button>
+          <button class="mobile-chip-btn" data-filter="shia">🔴 什葉派</button>
+          <button class="mobile-chip-btn" data-filter="sunni">🟢 遜尼派</button>
+          <button class="mobile-chip-btn" data-filter="us-military">🟡 美軍</button>
+        </div>
+      </div>
+
+      <!-- 2. 手機版右側快捷工具浮動鈕 (FABs) -->
+      <div class="mobile-floating-tools mobile-only">
+        <button class="mobile-fab-btn" id="mResetViewBtn" title="全景重設">🎯</button>
+        <button class="mobile-fab-btn" id="mToggleLegendBtn" title="圖例說明">ℹ️</button>
+        <button class="mobile-fab-btn" id="mToggleTileBtn" title="切換衛星/街道">🛰️</button>
+      </div>
+
+      <!-- 3. 手機版圖例說明彈出卡 -->
+      <div class="mobile-legend-modal mobile-only" id="mobileLegendModal">
+        <div style="font-weight:800; margin-bottom:6px; display:flex; justify-content:space-between;">
+          <span>陣營色彩圖例</span>
+          <span style="cursor:pointer;" id="mCloseLegendBtn">&times;</span>
+        </div>
+        <div class="legend-row"><span style="color:var(--shia-color);">🔴</span> 什葉派 (伊朗/伊拉克/葉門)</div>
+        <div class="legend-row"><span style="color:var(--sunni-color);">🟢</span> 遜尼派 (沙烏地/土/巴/埃)</div>
+        <div class="legend-row"><span style="color:var(--us-color);">🟡</span> 美軍戰略部隊 (艦隊/基地)</div>
+        <div class="legend-row"><span style="color:var(--choke-color);">🔵</span> 封鎖咽喉 / 衝突前線</div>
+      </div>
+
+      <!-- 4. 手機版底部焦點地標快速滑動列 (Focus Dock) -->
+      <div class="mobile-focus-dock mobile-only" id="mobileFocusDock">
+        <div class="dock-pill active" data-id="Iran">🇮🇷 伊朗核心</div>
+        <div class="dock-pill" data-id="SaudiArabia">🇸🇦 沙烏地</div>
+        <div class="dock-pill" data-id="StraitOfHormuz">⚓ 荷莫茲海峽</div>
+        <div class="dock-pill" data-id="Bahrain">🇧🇭 巴林基地</div>
+        <div class="dock-pill" data-id="Azerbaijan">🇦🇿 亞塞拜然</div>
+        <div class="dock-pill" data-id="Syria">🇸🇾 敘利亞</div>
+        <div class="dock-pill" data-id="Yemen">🇾🇪 葉門胡塞</div>
+        <div class="dock-pill" data-id="Turkey">🇹🇷 土耳其</div>
+        <div class="dock-pill" data-id="Pakistan">🇵🇰 巴基斯坦</div>
+      </div>
+
+      <!-- 5. 手機版 Google Maps 3-Stage 底部上拉抽屜 (Bottom Sheet) -->
+      <section class="mobile-bottom-sheet mobile-only state-peek" id="mobileBottomSheet">
+        <!-- 頂部拖曳把手條 -->
+        <div class="mobile-sheet-handle-bar" id="mSheetHandleBar">
+          <div class="mobile-handle-pill"></div>
+        </div>
+
+        <!-- 抽屜緊湊標題列 (點擊切換展開/收合) -->
+        <div class="mobile-sheet-head" id="mSheetHead">
+          <div class="mobile-head-left">
+            <span class="mobile-head-tag" id="mSheetTag">什葉派權力核心</span>
+            <div class="mobile-head-title" id="mSheetTitle">伊朗與什葉派權力核心</div>
+          </div>
+          <div class="mobile-expand-indicator" id="mExpandIcon">▲</div>
+        </div>
+
+        <!-- Peek 模式下露出之核心摘要簡評 -->
+        <div class="mobile-peek-snippet" id="mPeekSnippet">
+          由莫吉塔巴·哈米尼領導。因本土防空受創，戰略轉為保衛政權...
+        </div>
+
+        <!-- 可滾動詳細內容區 -->
+        <div class="mobile-sheet-scroll">
+          <!-- 戰略速覽指標 -->
+          <div class="mobile-meta-grid">
+            <div class="mobile-meta-box">
+              <div class="mobile-meta-label">領導階層</div>
+              <div class="mobile-meta-val" id="mSheetLeader">莫吉塔巴·哈米尼</div>
+            </div>
+            <div class="mobile-meta-box">
+              <div class="mobile-meta-label">戰略焦點</div>
+              <div class="mobile-meta-val" id="mSheetFocus">保衛政權存續</div>
+            </div>
+          </div>
+
+          <!-- 核心必備注入文本 -->
+          <div class="mobile-highlight-box" id="mSheetHighlight">
+            由莫吉塔巴·哈米尼領導。因本土防空受創，戰略從區域霸權轉為保衛政權，並發動無差別攻擊。
+          </div>
+
+          <!-- 深度情報研析 -->
+          <div class="mobile-sec-header">地緣戰略轉向研析</div>
+          <div class="mobile-analysis-p" id="mSheetAnalysis">
+            詳細分析加載中...
+          </div>
+
+          <!-- 2026 事件時間線 -->
+          <div class="mobile-sec-header">2026 軍事行動時間線</div>
+          <ul class="mobile-timeline" id="mSheetTimeline"></ul>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==========================================================================
+       JavaScript 核心控制邏輯
+       ========================================================================== -->
+  <script>
+    /**
+     * 2026 中東地緣政治核心數據庫
+     * 完整注入指定的 ID、標題、核心論述與地緣脈絡
+     */
+    const geopoliticalDatabase = {
+      // 1. 伊朗 (指定必備項目)
+      Iran: {
+        id: "Iran",
+        title: "伊朗與什葉派權力核心",
+        faction: "shia",
+        factionName: "什葉派權力核心",
+        themeColor: "#d93025",
+        coordinates: [32.4279, 53.6880],
+        zoom: 5,
+        leader: "莫吉塔巴·哈米尼 (Mojtaba Khamenei)",
+        focus: "保衛政權存續、無差別飽和打擊",
+        coreText: "由莫吉塔巴·哈米尼領導。因本土防空受創，戰略從區域霸權轉為保衛政權，並發動無差別攻擊。",
+        extendedText: `
+          <p><strong>戰略大轉折：</strong>以色列與美國的高強度精準打擊重創了伊朗防空網與核設施，伴隨真主黨等代理人網絡瓦解，伊朗過去幾十年賴以擴張的「什葉派之弧」體系陷入癱瘓。</p>
+          <p>新任領導人莫吉塔巴·哈米尼被迫將戰略優先級從「爭奪中東區域霸權」轉向「孤注一擲保衛政權存續」，採取無差別導彈與無人機飽和打擊，試圖拉高區域動盪成本逼退外部威脅。</p>
+        `,
+        timeline: [
+          { date: "2026年3月5日", desc: "發動對亞塞拜然越境襲擊，破壞通往歐洲之能源管線。" },
+          { date: "2026年3月9日", desc: "對巴林境內美軍第5艦隊基地發動飽和飛彈襲擊，並試圖封鎖荷莫茲海峽。" }
+        ]
+      },
+
+      // 2. 沙烏地阿拉伯 (指定必備項目)
+      SaudiArabia: {
+        id: "SaudiArabia",
+        title: "沙烏地阿拉伯與遜尼派聯盟",
+        faction: "sunni",
+        factionName: "遜尼派聯盟",
+        themeColor: "#188038",
+        coordinates: [24.7136, 46.6753],
+        zoom: 5,
+        leader: "王儲 穆罕默德·本·沙爾曼 (MBS)",
+        focus: "推動《麥加協議》、尋求核保護傘",
+        coreText: "對美國保護傘失去信心，戰略轉向與擁核的巴基斯坦結盟，並推動伊斯蘭集體防衛體系。",
+        extendedText: `
+          <p><strong>美國保護傘失信：</strong>當煉油基礎設施接連遭遇突襲時，海灣盟國深刻感受到美軍攔截彈藥補給遲緩，且易受以美對伊戰略牽連，因此決定尋求多極化國防架構。</p>
+          <p><strong>《麥加協議》防衛軸心：</strong>沙烏地憑藉雄厚主權基金，結盟擁有北約強大常規陸空軍力的土耳其，並引入巴基斯坦成熟的戰略核遏阻力量，構築起全新的伊斯蘭集體防禦體系。</p>
+        `,
+        timeline: [
+          { date: "2025年", desc: "愛國者反導彈藥消耗告急，海灣各國啟動多方戰略自主研判。" },
+          { date: "2026年", desc: "沙烏地正式倡議簽訂《麥加協議》，整合土耳其常規軍力與巴基斯坦戰略核保證。" }
+        ]
+      },
+
+      // 3. 荷莫茲海峽 (指定必備項目)
+      StraitOfHormuz: {
+        id: "StraitOfHormuz",
+        title: "咽喉點與海上封鎖 (荷莫茲海峽)",
+        faction: "choke",
+        factionName: "能源咽喉與封鎖",
+        themeColor: "#1a73e8",
+        coordinates: [26.5667, 56.2500],
+        zoom: 7,
+        leader: "伊朗革命衛隊海軍 (IRGCN)",
+        focus: "航道水雷布設、岸置飛彈威懾",
+        coreText: "伊朗為反擊而試圖封鎖荷莫茲海峽，並對巴林的美軍基地與民用設施發動攻擊（2026年3月9日）。",
+        extendedText: `
+          <p><strong>全球能源血管緊縮：</strong>作為承載全球兩成以上原油貿易的最窄咽喉通道，伊朗藉由水雷與岸基反艦飛彈對商船實施高壓封鎖，藉此引爆國際原油惡性通膨危機來制約外部攻勢。</p>
+        `,
+        timeline: [
+          { date: "2026年3月9日", desc: "伊朗革命衛隊海軍宣布進入交戰管制，向周邊航運發動無差別實彈拒止。" }
+        ]
+      },
+
+      // 4. 亞塞拜然
+      Azerbaijan: {
+        id: "Azerbaijan",
+        title: "亞塞拜然 (3/5 越境襲擊前線)",
+        faction: "choke",
+        factionName: "衝突前線 / 能源管線",
+        themeColor: "#d93025",
+        coordinates: [40.4093, 49.8671],
+        zoom: 6.5,
+        leader: "伊利哈姆·阿利耶夫總統",
+        focus: "確保裏海油氣管道與邊界安全",
+        coreText: "2026年3月5日遭伊朗越境打擊，意圖威脅通往以色列與歐洲的關鍵能源管線走廊。",
+        extendedText: `
+          <p>亞塞拜然作為歐洲擺脫俄羅斯天然氣與以色列能源供應的要道，成為伊朗試圖轉移南部壓力並震懾北翼的第一個目標。</p>
+        `,
+        timeline: [
+          { date: "2026年3月5日", desc: "南部邊境能源輸油站遭伊朗無人機突襲，土耳其迅速進駐防空雷達協防。" }
+        ]
+      },
+
+      // 5. 巴林第5艦隊基地
+      Bahrain: {
+        id: "Bahrain",
+        title: "巴林美軍第5艦隊基地 (3/9 飽和襲擊)",
+        faction: "us-military",
+        factionName: "美軍核心前沿母港",
+        themeColor: "#f29900",
+        coordinates: [26.2285, 50.5860],
+        zoom: 7.5,
+        leader: "美軍中央司令部海軍司令部",
+        focus: "防空攔截、維持波斯灣海權",
+        coreText: "2026年3月9日遭伊朗發動大規模飽和飛彈與無人機突襲，基地與周邊民用基礎設施受創。",
+        extendedText: `
+          <p>巴林朱法爾海軍基地是美軍在中東的核心樞紐。伊朗在2026年3月9日的飽和打擊不僅針對軍事泊位，更波及民用港埠，引發海灣全面防空升級。</p>
+        `,
+        timeline: [
+          { date: "2026年3月9日", desc: "數十枚彈道飛彈與無人機展開多批次突擊，造成港區嚴重受損。" }
+        ]
+      },
+
+      // 6. 東地中海美軍
+      USMed: {
+        id: "USMed",
+        title: "美軍東地中海航艦打擊群",
+        faction: "us-military",
+        factionName: "美軍戰略部署",
+        themeColor: "#f29900",
+        coordinates: [34.0, 31.0],
+        zoom: 5.5,
+        leader: "美軍第6艦隊航艦打擊編隊",
+        focus: "戰區防空盾、遠程巡弋飛彈投射",
+        coreText: "部署於地中海東側，提供遠程精準打擊、戰區飛彈防禦並牽制北方側翼。",
+        extendedText: `
+          <p>航艦打擊群透過艦載神盾系統與防空導彈，為黎凡特與以色列周邊構築空防屏障，同時負責警戒敘利亞空域動向。</p>
+        `,
+        timeline: [
+          { date: "2026年3月", desc: "完成與盟軍聯合戰鬥巡邏佈署，進入即時反導戒備狀態。" }
+        ]
+      },
+
+      // 7. 印度洋美軍支援梯隊
+      USIndian: {
+        id: "USIndian",
+        title: "美軍印度洋支援梯隊",
+        faction: "us-military",
+        factionName: "美軍戰略部署",
+        themeColor: "#f29900",
+        coordinates: [21.5, 61.5],
+        zoom: 5.5,
+        leader: "美軍印太/中央司令部聯合作戰編隊",
+        focus: "阿曼灣外線封鎖、遠程戰略威懾",
+        coreText: "控制荷莫茲海峽外圍航道，負責外線補給線安全與遠程戰略威懾。",
+        extendedText: `
+          <p>在阿曼灣與阿拉伯海集結的遠洋特遣部隊，是荷莫茲海峽一旦遭封鎖時，確保外圍航線安全與實施深遠反擊的後盾。</p>
+        `,
+        timeline: [
+          { date: "2026年3月", desc: "提升至外線一級戰備，執行海空警戒巡弋。" }
+        ]
+      },
+
+      // 8. 敘利亞新局
+      Syria: {
+        id: "Syria",
+        title: "敘利亞政局突變與土耳其勢力圈",
+        faction: "sunni",
+        factionName: "遜尼派過渡政權",
+        themeColor: "#188038",
+        coordinates: [34.8021, 38.9968],
+        zoom: 6,
+        leader: "親土耳其過渡政府",
+        focus: "接納2萬土軍進駐、清除親伊走廊",
+        coreText: "2024年底統治54年的阿薩德政權垮台，土耳其駐軍2萬人填補真空，截斷伊朗陸上走廊。",
+        extendedText: `
+          <p>阿薩德政權瓦解徹底斬斷了伊朗直通地中海的「什葉派新月陸上補給線」。土耳其的全面進駐使敘利亞倒向遜尼派陣營。</p>
+        `,
+        timeline: [
+          { date: "2024年12月", desc: "阿薩德家族政權垮台，土軍進駐並部署防空陣地。" }
+        ]
+      },
+
+      // 9. 葉門胡塞武裝
+      Yemen: {
+        id: "Yemen",
+        title: "葉門胡塞武裝 (曼德海峽咽喉)",
+        faction: "shia",
+        factionName: "什葉派代理勢力",
+        themeColor: "#d93025",
+        coordinates: [15.3694, 47.0],
+        zoom: 6,
+        leader: "胡塞武裝軍事委員會",
+        focus: "曼德海峽反艦襲擊、牽制紅海航道",
+        coreText: "伊朗在紅海南端的代理人要塞，以不對稱飛彈與自殺艇威脅全球航運。",
+        extendedText: `
+          <p>胡塞武裝利用紅海咽喉地形，與北面的波斯灣形成南北夾擊，持續向國際航線施壓以分散美以聯軍的戰力重心。</p>
+        `,
+        timeline: [
+          { date: "2026年", desc: "持續實施紅海曼德海峽商船與護航艦打擊行動。" }
+        ]
+      },
+
+      // 10. 伊拉克
+      Iraq: {
+        id: "Iraq",
+        title: "伊拉克 (什葉多數但深陷分裂)",
+        faction: "shia",
+        factionName: "什葉多數 / 派系分歧",
+        themeColor: "#d93025",
+        coordinates: [33.3152, 44.3661],
+        zoom: 6,
+        leader: "巴格達中央政府與什葉派民兵",
+        focus: "平衡美伊衝突、內部教派拉鋸",
+        coreText: "什葉派佔人口多數，但因親美派與親伊朗什葉民兵拉鋸，深陷內部派系分裂。",
+        extendedText: `
+          <p>伊拉克境內同時駐有美軍顧問與受伊朗革命衛隊指揮的人民動員軍（PMF），成為隨時可能爆發內戰衝突的火藥庫。</p>
+        `,
+        timeline: [
+          { date: "2026年", desc: "境內軍事基地多次面臨無人機突襲，政府極力避免捲入戰火。" }
+        ]
+      },
+
+      // 11. 土耳其
+      Turkey: {
+        id: "Turkey",
+        title: "土耳其 (《麥加協議》常規軍力支柱)",
+        faction: "sunni",
+        factionName: "遜尼派集體防衛盟友",
+        themeColor: "#188038",
+        coordinates: [39.0, 35.0],
+        zoom: 5.5,
+        leader: "雷傑普·塔伊普·艾爾多安 (Erdoğan)",
+        focus: "駐軍敘利亞2萬人、建構伊斯蘭集體防衛體系",
+        coreText: "政府右傾支持政教合一，填補敘利亞真空，透過《麥加協議》將影響力投射至波斯灣與紅海。",
+        extendedText: `
+          <p>透過與沙烏地結盟，土耳其不僅獲得了急需的海灣主權資金，更在戰略上構築起足以與外部大國平起平坐的伊斯蘭集體防衛陣營。</p>
+        `,
+        timeline: [
+          { date: "2026年", desc: "與沙烏地簽署深度國防互助協議，共同牽制美伊衝突外溢。" }
+        ]
+      },
+
+      // 12. 巴基斯坦
+      Pakistan: {
+        id: "Pakistan",
+        title: "巴基斯坦 (《麥加協議》戰略核屏障)",
+        faction: "sunni",
+        factionName: "遜尼派核盟友",
+        themeColor: "#188038",
+        coordinates: [30.0, 69.0],
+        zoom: 5.5,
+        leader: "巴基斯坦最高軍事指揮部",
+        focus: "提供戰略核威懾承諾、平衡伊朗東界",
+        coreText: "受《麥加協議》拉攏，以成熟戰略核武為遜尼派集體防衛體系提供終極核威懾屏障。",
+        extendedText: `
+          <p>在沙烏地對西方保護傘失去信心後，巴基斯坦成為遜尼派集體防禦體系中無可取代的終極戰略核武支柱。</p>
+        `,
+        timeline: [
+          { date: "2026年", desc: "正式與沙烏地建立戰略安保熱線，派遣高階軍事顧問團常駐海灣。" }
+        ]
+      },
+
+      // 13. 埃及
+      Egypt: {
+        id: "Egypt",
+        title: "埃及 (謹慎中立與守護蘇伊士)",
+        faction: "sunni",
+        factionName: "遜尼派中立國",
+        themeColor: "#188038",
+        coordinates: [26.5, 30.0],
+        zoom: 5.5,
+        leader: "阿卜杜勒-法塔赫·塞西總統",
+        focus: "確保蘇伊士運河通航、嚴守西奈邊界",
+        coreText: "保持高度謹慎中立，全力防止紅海航道中斷對蘇伊士運河外匯的衝擊。",
+        extendedText: `
+          <p>埃及面臨嚴重的外匯危機，其首要戰略為確保蘇伊士運河航運安全，並防止區域難民潮與極端主義波及西奈半島。</p>
+        `,
+        timeline: [
+          { date: "2026年", desc: "強化紅海北端防禦巡邏，在多方博弈中維持謹慎中立斡旋。" }
+        ]
+      }
+    };
+
+    // ==========================================================================
+    // 陣營勢力範圍多邊形 (高精度無縫地理邊界)
+    // ==========================================================================
+    const territoryPolygons = [
+      {
+        id: "Iran",
+        name: "伊朗本土 (什葉派核心)",
+        faction: "shia",
+        color: "#d93025",
+        coords: [
+          [38.4, 44.3], [39.0, 44.5], [39.7, 44.8], [39.0, 47.0], [38.4, 48.6], 
+          [38.4, 48.8], [37.5, 49.3], [37.0, 50.1], [36.9, 51.5], [36.8, 53.5], 
+          [36.8, 54.0], [37.3, 54.0], [37.8, 54.5], [37.7, 56.5], [38.2, 57.5], 
+          [37.8, 58.8], [37.4, 59.5], [36.5, 61.2], [35.5, 61.1], [34.0, 60.5], 
+          [32.0, 60.9], [30.5, 61.8], [29.8, 61.0], [28.0, 62.0], [26.5, 62.0], 
+          [25.1, 61.6], [25.3, 60.6], [25.4, 59.0], [25.6, 57.8], [27.0, 56.5], 
+          [27.2, 56.3], [26.7, 55.0], [26.8, 54.0], [27.4, 52.6], [28.2, 51.5], 
+          [29.6, 50.3], [30.0, 49.1], [30.4, 48.6], [31.0, 47.7], [32.0, 47.3], 
+          [33.0, 46.1], [34.0, 45.4], [35.0, 45.8], [36.0, 45.2], [37.0, 44.8], 
+          [38.0, 44.3]
+        ]
+      },
+      {
+        id: "Iraq",
+        name: "伊拉克 (什葉派多數/分歧區)",
+        faction: "shia",
+        color: "#d93025",
+        coords: [
+          [37.4, 42.8], [37.3, 43.5], [37.1, 44.5], [37.0, 44.8], [36.0, 45.2], 
+          [35.0, 45.8], [34.0, 45.4], [33.0, 46.1], [32.0, 47.3], [31.0, 47.7], 
+          [30.4, 48.6], [29.9, 48.5], [29.1, 47.5], [29.1, 46.5], [30.5, 43.5], 
+          [31.5, 41.5], [32.2, 39.2], [32.5, 39.0], [33.4, 38.8], [34.5, 41.0], 
+          [36.0, 41.8], [36.9, 42.4], [37.4, 42.8]
+        ]
+      },
+      {
+        id: "Yemen",
+        name: "葉門 (胡塞武裝勢力範圍)",
+        faction: "shia",
+        color: "#d93025",
+        coords: [
+          [16.4, 42.8], [17.0, 42.8], [17.5, 43.5], [16.5, 44.5], [17.3, 47.0], 
+          [17.3, 52.0], [16.6, 53.1], [15.2, 52.0], [14.5, 49.5], [14.0, 48.0], 
+          [13.2, 45.3], [12.7, 44.5], [12.6, 43.4], [13.4, 43.2], [14.5, 42.9], 
+          [15.5, 42.6], [16.4, 42.8]
+        ]
+      },
+      {
+        id: "SaudiArabia",
+        name: "沙烏地阿拉伯 (遜尼派核心)",
+        faction: "sunni",
+        color: "#188038",
+        coords: [
+          [31.5, 37.1], [32.2, 39.2], [31.5, 41.5], [30.5, 43.5], [29.1, 46.5], 
+          [28.5, 47.7], [28.5, 48.5], [27.5, 49.2], [26.5, 50.1], [25.5, 50.3], 
+          [24.5, 50.8], [24.0, 51.6], [24.0, 53.0], [23.0, 55.2], [22.5, 55.7], 
+          [20.0, 55.0], [19.0, 52.0], [17.3, 52.0], [17.3, 47.0], [16.5, 44.5], 
+          [17.5, 43.5], [17.0, 42.8], [16.4, 42.8], [17.5, 42.2], [18.5, 41.5], 
+          [20.0, 40.2], [21.5, 39.2], [23.5, 38.5], [25.0, 37.3], [27.0, 35.8], 
+          [28.0, 35.0], [29.0, 35.0], [29.5, 35.0], [29.3, 34.9], [29.5, 35.8], 
+          [30.0, 36.5], [31.5, 37.1]
+        ]
+      },
+      {
+        id: "Syria",
+        name: "敘利亞 (親土耳其過渡勢力圈)",
+        faction: "sunni",
+        color: "#188038",
+        coords: [
+          [36.8, 35.9], [36.7, 36.6], [36.8, 38.0], [37.0, 39.5], [37.0, 41.5], 
+          [37.4, 42.8], [36.9, 42.4], [36.0, 41.8], [34.5, 41.0], [33.4, 38.8], 
+          [32.5, 39.0], [32.3, 37.5], [32.5, 36.0], [32.8, 35.8], [33.3, 35.8], 
+          [33.8, 36.2], [34.5, 36.3], [34.6, 35.9], [34.9, 35.9], [35.9, 35.8], 
+          [36.8, 35.9]
+        ]
+      },
+      {
+        id: "Egypt",
+        name: "埃及 (謹慎中立與蘇伊士)",
+        faction: "sunni",
+        color: "#188038",
+        coords: [
+          [31.3, 34.2], [31.0, 33.0], [31.5, 31.5], [31.5, 30.0], [31.5, 25.0], 
+          [22.0, 25.0], [22.0, 36.8], [24.0, 35.5], [26.0, 34.3], [27.8, 33.8], 
+          [28.0, 34.5], [29.5, 34.9], [31.3, 34.2]
+        ]
+      },
+      {
+        id: "Turkey",
+        name: "土耳其 (麥加協議盟友)",
+        faction: "sunni",
+        color: "#188038",
+        coords: [
+          [42.0, 26.0], [42.0, 41.5], [41.0, 43.5], [39.5, 44.5], [37.4, 42.8], 
+          [37.0, 41.5], [37.0, 39.5], [36.8, 38.0], [36.7, 36.6], [36.8, 35.9], 
+          [36.0, 33.5], [36.5, 30.0], [38.5, 26.5], [40.5, 26.0], [42.0, 26.0]
+        ]
+      },
+      {
+        id: "Pakistan",
+        name: "巴基斯坦 (核威懾夥伴)",
+        faction: "sunni",
+        color: "#188038",
+        coords: [
+          [36.5, 74.5], [35.0, 75.0], [31.5, 74.5], [28.0, 70.0], [24.0, 68.0], 
+          [25.0, 62.0], [25.1, 61.6], [26.5, 62.0], [28.0, 62.0], [29.8, 61.0], 
+          [30.5, 61.8], [32.0, 60.9], [31.5, 66.5], [34.0, 70.0], [36.5, 74.5]
+        ]
+      },
+      {
+        id: "GulfStates",
+        name: "海灣阿拉伯國家聯盟 (阿聯酋/阿曼/卡達/科威特)",
+        faction: "sunni",
+        color: "#188038",
+        coords: [
+          [26.2, 56.4], [25.5, 56.3], [24.5, 56.8], [23.5, 59.0], [22.5, 59.8], 
+          [20.5, 58.8], [19.0, 57.5], [17.0, 55.0], [16.6, 53.1], [17.3, 52.0], 
+          [19.0, 52.0], [20.0, 55.0], [22.5, 55.7], [24.0, 51.6], [26.0, 50.5], 
+          [28.5, 48.5], [29.9, 48.5], [28.5, 48.5], [26.2, 56.4]
+        ]
+      },
+      {
+        id: "Azerbaijan",
+        name: "亞塞拜然 (3/5 越境攻擊衝突區)",
+        faction: "choke",
+        color: "#1a73e8",
+        coords: [
+          [41.9, 46.5], [41.6, 48.5], [40.6, 50.3], [39.3, 49.5], [38.4, 48.8], 
+          [39.0, 47.0], [39.7, 44.8], [41.0, 45.2], [41.9, 46.5]
+        ]
+      },
+      {
+        id: "StraitOfHormuz",
+        name: "荷莫茲海峽海上封鎖區 (Chokepoint)",
+        faction: "choke",
+        color: "#1a73e8",
+        coords: [
+          [27.3, 55.8], [27.3, 56.8], [26.0, 56.8], [26.0, 55.8]
+        ]
+      }
+    ];
+
+    // ==========================================================================
+    // 地圖核心初始化 (100% 免 API Key 圖資)
+    // ==========================================================================
+    const map = L.map("map", {
+      center: [28.0, 48.0],
+      zoom: 5,
+      minZoom: 3,
+      maxZoom: 14,
+      zoomControl: false
+    });
+
+    const tileLayers = {
+      streets: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+        attribution: 'Tiles &copy; Esri &mdash; DeLorme, NAVTEQ, USGS',
+        maxZoom: 18
+      }),
+      osm: L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 19
+      }),
+      satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", {
+        attribution: 'Tiles &copy; Esri &mdash; USDA, USGS, GeoEye',
+        maxZoom: 18
+      })
+    };
+    tileLayers.streets.addTo(map);
+
+    // ==========================================================================
+    // 自訂 Google Maps 質感 Pin 圖示
+    // ==========================================================================
+    function createPinIcon(color, symbol = "●") {
+      return L.divIcon({
+        className: "custom-gm-pin",
+        html: `
+          <div class="gm-pin-container">
+            <svg class="gm-pin-svg" width="32" height="42" viewBox="0 0 32 42">
+              <path d="M16 0C7.16 0 0 7.16 0 16c0 11.2 16 26 16 26s16-14.8 16-26c0-8.84-7.16-16-16-16z" fill="${color}" stroke="#ffffff" stroke-width="2"/>
+              <circle cx="16" cy="15" r="7.5" fill="#ffffff"/>
+              <text x="16" y="19" font-size="11" font-weight="bold" fill="${color}" text-anchor="middle">${symbol}</text>
+            </svg>
+            <div class="gm-pin-radar" style="border: 2px solid ${color};"></div>
+          </div>
+        `,
+        iconSize: [32, 42],
+        iconAnchor: [16, 42],
+        popupAnchor: [0, -42]
+      });
+    }
+
+    // 渲染多邊形顏色區塊
+    const renderedPolygons = {};
+    territoryPolygons.forEach(territory => {
+      const poly = L.polygon(territory.coords, {
+        color: territory.color,
+        weight: 2,
+        opacity: 0.85,
+        fillColor: territory.color,
+        fillOpacity: 0.22
+      }).addTo(map);
+
+      poly.on("mouseover", () => poly.setStyle({ weight: 3.5, fillOpacity: 0.38 }));
+      poly.on("mouseout", () => poly.setStyle({ weight: 2, fillOpacity: 0.22 }));
+      poly.on("click", () => {
+        if (geopoliticalDatabase[territory.id]) {
+          showLocationDetail(territory.id, true);
+        }
+      });
+      poly.bindTooltip(`<strong style="color:${territory.color};">${territory.name}</strong>`, { sticky: true });
+
+      renderedPolygons[territory.id] = { layer: poly, faction: territory.faction, baseColor: territory.color };
+    });
+
+    // 渲染地標 Marker (Pins)
+    const renderedMarkers = {};
+    Object.values(geopoliticalDatabase).forEach(item => {
+      let symbol = "●";
+      if (item.id === "Iran") symbol = "🇮🇷";
+      else if (item.id === "SaudiArabia") symbol = "🇸🇦";
+      else if (item.id === "StraitOfHormuz") symbol = "⚓";
+      else if (item.id.includes("US")) symbol = "★";
+      else if (item.id === "Azerbaijan") symbol = "🎯";
+      else if (item.id === "Turkey") symbol = "🇹🇷";
+      else if (item.id === "Pakistan") symbol = "🇵🇰";
+      else if (item.id === "Egypt") symbol = "🇪🇬";
+      else if (item.id === "Syria") symbol = "🇸🇾";
+      else if (item.id === "Yemen") symbol = "🇾🇪";
+      else if (item.id === "Iraq") symbol = "🇮🇶";
+
+      const icon = createPinIcon(item.themeColor, symbol);
+      const marker = L.marker(item.coordinates, { icon: icon }).addTo(map);
+
+      marker.bindTooltip(`<strong>${item.title}</strong>`, { offset: [0, -38], direction: "top" });
+      marker.on("click", () => showLocationDetail(item.id, true));
+
+      renderedMarkers[item.id] = { marker: marker, faction: item.faction };
+    });
+
+    // ==========================================================================
+    // 電腦版 vs 手機版介面切換控制器 (Mode Switcher)
+    // ==========================================================================
+    let currentViewMode = "desktop";
+    let isWithFrame = true; // 桌機手機版外框狀態
+
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      const body = document.body;
+      const btnDesk = document.getElementById("btnModeDesktop");
+      const btnMob = document.getElementById("btnModeMobile");
+
+      if (mode === "desktop") {
+        body.classList.remove("mode-mobile", "with-frame", "no-frame");
+        body.classList.add("mode-desktop");
+        btnDesk.classList.add("active");
+        btnMob.classList.remove("active");
+      } else {
+        body.classList.remove("mode-desktop");
+        body.classList.add("mode-mobile");
+        if (isWithFrame) body.classList.add("with-frame");
+        else body.classList.add("no-frame");
+        btnMob.classList.add("active");
+        btnDesk.classList.remove("active");
+      }
+
+      // 地圖重整尺寸與視角自適應
+      setTimeout(() => {
+        map.invalidateSize();
+        if (mode === "mobile") {
+          // 移動到適合手機觀看之視角 (微偏南以留出頂部空間)
+          map.flyTo([25.0, 48.0], 4.2, { duration: 0.8 });
+        } else {
+          map.flyTo([28.0, 48.0], 5, { duration: 0.8 });
+        }
+      }, 250);
+    }
+
+    function toggleMobileFrame() {
+      if (currentViewMode !== "mobile") return;
+      const body = document.body;
+      isWithFrame = !isWithFrame;
+      if (isWithFrame) {
+        body.classList.remove("no-frame");
+        body.classList.add("with-frame");
+      } else {
+        body.classList.remove("with-frame");
+        body.classList.add("no-frame");
+      }
+      setTimeout(() => map.invalidateSize(), 250);
+    }
+
+    // ==========================================================================
+    // 詳情顯示邏輯 (同步更新電腦版側邊欄 & 手機版底部抽屜)
+    // ==========================================================================
+    let activeLocationId = "Iran";
+    const desktopSideSheet = document.getElementById("desktopSideSheet");
+    const mobileBottomSheet = document.getElementById("mobileBottomSheet");
+
+    function showLocationDetail(id, shouldFly = true) {
+      const data = geopoliticalDatabase[id];
+      if (!data) return;
+      activeLocationId = id;
+
+      // 1. 更新電腦版側邊欄
+      document.getElementById("desktopSheetTitle").textContent = data.title;
+      document.getElementById("desktopSheetLeader").textContent = data.leader || "未特別註記";
+      document.getElementById("desktopSheetFocus").textContent = data.focus || "地緣軍事防衛";
+      document.getElementById("desktopSheetHighlight").innerHTML = data.coreText;
+      document.getElementById("desktopSheetAnalysis").innerHTML = data.extendedText;
+      document.getElementById("desktopSheetTag").textContent = data.factionName;
+      document.getElementById("desktopSheetTag").style.backgroundColor = data.themeColor;
+      document.getElementById("desktopSheetHead").style.background = `linear-gradient(135deg, ${data.themeColor}dd, #0f172a)`;
+
+      const dTimeline = document.getElementById("desktopSheetTimeline");
+      dTimeline.innerHTML = "";
+      if (data.timeline) {
+        data.timeline.forEach(item => {
+          const li = document.createElement("li");
+          li.style.marginBottom = "12px";
+          li.innerHTML = `<strong style="color:#174ea6;">${item.date}</strong><div style="color:#5f6368; font-size:0.85rem;">${item.desc}</div>`;
+          dTimeline.appendChild(li);
+        });
+      }
+      desktopSideSheet.classList.add("open");
+
+      // 2. 更新手機版底部抽屜
+      document.getElementById("mSheetTitle").textContent = data.title;
+      document.getElementById("mSheetTag").textContent = data.factionName;
+      document.getElementById("mSheetTag").style.backgroundColor = data.themeColor;
+      document.getElementById("mSheetHead").style.background = `linear-gradient(135deg, ${data.themeColor}dd, #0f172a)`;
+      document.getElementById("mPeekSnippet").textContent = data.coreText;
+      document.getElementById("mSheetLeader").textContent = data.leader || "未特別註記";
+      document.getElementById("mSheetFocus").textContent = data.focus || "地緣軍事防衛";
+      document.getElementById("mSheetHighlight").innerHTML = data.coreText;
+      document.getElementById("mSheetAnalysis").innerHTML = data.extendedText;
+
+      const mTimeline = document.getElementById("mSheetTimeline");
+      mTimeline.innerHTML = "";
+      if (data.timeline) {
+        data.timeline.forEach(item => {
+          const li = document.createElement("li");
+          li.className = "mobile-timeline-item";
+          li.innerHTML = `<div class="mobile-tl-date">${item.date}</div><div class="mobile-tl-desc">${item.desc}</div>`;
+          mTimeline.appendChild(li);
+        });
+      }
+
+      // 手機端焦點 Dock 狀態同步
+      document.querySelectorAll(".dock-pill").forEach(pill => {
+        pill.classList.toggle("active", pill.getAttribute("data-id") === id);
+      });
+
+      // 視角自動飛行 (手機端具備向上偏置補償，不被抽屜擋住)
+      if (shouldFly && data.coordinates) {
+        const isMobileMode = currentViewMode === "mobile";
+        const targetLat = isMobileMode ? data.coordinates[0] - 2.6 : data.coordinates[0];
+        const targetZoom = isMobileMode ? Math.max(data.zoom - 0.4, 4.4) : data.zoom;
+        map.flyTo([targetLat, data.coordinates[1]], targetZoom, { duration: 1.0 });
+      }
+    }
+
+    // 關閉電腦版側邊欄
+    document.getElementById("desktopCloseBtn").addEventListener("click", () => {
+      desktopSideSheet.classList.remove("open");
+    });
+
+    // ==========================================================================
+    // 手機版底部抽屜交互邏輯 (3-Stage Snap & Touch Swipe)
+    // ==========================================================================
+    let sheetState = "peek"; // peek, half, full
+
+    function setMobileSheetState(newState) {
+      sheetState = newState;
+      mobileBottomSheet.classList.remove("state-peek", "state-half", "state-full");
+      mobileBottomSheet.classList.add(`state-${newState}`);
+
+      const dock = document.getElementById("mobileFocusDock");
+      if (newState === "full") {
+        dock.style.opacity = "0";
+        dock.style.pointerEvents = "none";
+      } else {
+        dock.style.opacity = "1";
+        dock.style.pointerEvents = "auto";
+      }
+    }
+
+    // 點擊頂部標題或把手切換狀態
+    document.getElementById("mSheetHead").addEventListener("click", () => {
+      if (sheetState === "peek") setMobileSheetState("half");
+      else if (sheetState === "half") setMobileSheetState("full");
+      else setMobileSheetState("peek");
+    });
+
+    document.getElementById("mSheetHandleBar").addEventListener("click", () => {
+      if (sheetState === "peek") setMobileSheetState("half");
+      else setMobileSheetState("peek");
+    });
+
+    // 原生觸控手勢滑動支援 (Swipe Up / Down)
+    let touchStartY = 0;
+    const swipeHeaderArea = [document.getElementById("mSheetHandleBar"), document.getElementById("mSheetHead")];
+    swipeHeaderArea.forEach(el => {
+      el.addEventListener("touchstart", (e) => {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      el.addEventListener("touchend", (e) => {
+        const diffY = touchStartY - e.changedTouches[0].clientY;
+        if (diffY > 40) {
+          // 向上滑動：展開下一階段
+          if (sheetState === "peek") setMobileSheetState("half");
+          else if (sheetState === "half") setMobileSheetState("full");
+        } else if (diffY < -40) {
+          // 向下滑動：收合下一階段
+          if (sheetState === "full") setMobileSheetState("half");
+          else if (sheetState === "half") setMobileSheetState("peek");
+        }
+      }, { passive: true });
+    });
+
+    // ==========================================================================
+    // 陣營篩選功能 (桌面與手機同步過濾)
+    // ==========================================================================
+    function applyFactionFilter(filter) {
+      // 1. 同步按鈕 Active 樣式
+      document.querySelectorAll(".desktop-chip-btn, .mobile-chip-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-filter") === filter);
+      });
+
+      // 2. 過濾 Marker
+      Object.entries(renderedMarkers).forEach(([id, item]) => {
+        if (filter === "all" || item.faction === filter) {
+          map.addLayer(item.marker);
+        } else {
+          map.removeLayer(item.marker);
+        }
+      });
+
+      // 3. 過濾顏色多邊形
+      Object.entries(renderedPolygons).forEach(([id, item]) => {
+        if (filter === "all") {
+          item.layer.setStyle({ opacity: 0.85, fillOpacity: 0.22, weight: 2 });
+        } else if (item.faction === filter) {
+          item.layer.setStyle({ opacity: 1, fillOpacity: 0.4, weight: 3.5 });
+        } else {
+          item.layer.setStyle({ opacity: 0.15, fillOpacity: 0.03, weight: 1 });
+        }
+      });
+    }
+
+    document.querySelectorAll(".desktop-chip-btn, .mobile-chip-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const filter = btn.getAttribute("data-filter");
+        applyFactionFilter(filter);
+      });
+    });
+
+    // ==========================================================================
+    // 快捷選單與輔助工具按鈕綁定
+    // ==========================================================================
+    // 電腦版搜尋下拉
+    document.getElementById("desktopQuickSelect").addEventListener("change", (e) => {
+      if (e.target.value) showLocationDetail(e.target.value, true);
+    });
+
+    // 手機版搜尋下拉
+    document.getElementById("mobileQuickSelect").addEventListener("change", (e) => {
+      if (e.target.value) showLocationDetail(e.target.value, true);
+    });
+
+    // 手機版底部焦點 Dock 點擊
+    document.querySelectorAll(".dock-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        const targetId = pill.getAttribute("data-id");
+        showLocationDetail(targetId, true);
+      });
+    });
+
+    // 手機版 FAB 按鈕
+    document.getElementById("mResetViewBtn").addEventListener("click", () => {
+      map.flyTo([25.0, 48.0], 4.2, { duration: 0.9 });
+    });
+
+    const mLegendModal = document.getElementById("mobileLegendModal");
+    document.getElementById("mToggleLegendBtn").addEventListener("click", () => {
+      mLegendModal.classList.toggle("show");
+    });
+    document.getElementById("mCloseLegendBtn").addEventListener("click", () => {
+      mLegendModal.classList.remove("show");
+    });
+
+    let currentTileKey = "streets";
+    document.getElementById("mToggleTileBtn").addEventListener("click", () => {
+      Object.values(tileLayers).forEach(layer => map.removeLayer(layer));
+      if (currentTileKey === "streets") {
+        tileLayers.satellite.addTo(map);
+        currentTileKey = "satellite";
+      } else {
+        tileLayers.streets.addTo(map);
+        currentTileKey = "streets";
+      }
+    });
+
+    // 電腦版底圖風格切換
+    document.querySelectorAll(".desktop-style-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".desktop-style-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        const styleKey = btn.getAttribute("data-style");
+        Object.values(tileLayers).forEach(layer => map.removeLayer(layer));
+        tileLayers[styleKey].addTo(map);
+      });
+    });
+
+    // 視窗變化重繪地圖
+    window.addEventListener("resize", () => {
+      map.invalidateSize();
+    });
+
+    // 頁面初始化
+    document.addEventListener("DOMContentLoaded", () => {
+      // 依使用者螢幕大小智能推薦初始模式
+      const isMobileScreen = window.innerWidth <= 768;
+      switchViewMode(isMobileScreen ? "mobile" : "desktop");
+
+      // 預設展開伊朗情報
+      showLocationDetail("Iran", false);
+    });
+  </script>
+</body>
+</html>
