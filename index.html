@@ -1,0 +1,3000 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>10月7日，時代翻頁｜以色列戰略轉向與中東區域情勢互動簡報</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    .fade-in {
+      animation: fadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .pulse-ring {
+      animation: pulseRing 2.4s infinite;
+    }
+    @keyframes pulseRing {
+      0% { r: 8; opacity: 0.7; }
+      70% { r: 18; opacity: 0; }
+      100% { r: 18; opacity: 0; }
+    }
+    .map-node {
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .map-node:hover {
+      transform: scale(1.12);
+    }
+  </style>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-3 md:p-5 select-none">
+
+  <!-- Top Header & Mode Switcher -->
+  <header class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-4 md:p-5 shadow-sm mb-5">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2 mb-1.5">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">
+            中東戰略深度剖析 (2023–2026)
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)]">
+            互動式教學簡報 & 戰略儀表板
+          </span>
+        </div>
+        <h1 class="text-xl md:text-2xl font-bold tracking-tight text-[var(--foreground)]">
+          10月7日，時代翻頁：以色列戰略大轉向與中東權力重組
+        </h1>
+        <p class="text-sm text-[var(--muted-foreground)] mt-1">
+          從「嚇阻與管控衝突」走向「根除攻擊能力」——自 1973 年贖罪日戰爭以來最劇烈的戰略典範轉移
+        </p>
+      </div>
+
+      <!-- Mode Switch & Slide Controls -->
+      <div class="flex flex-wrap items-center gap-2 self-start lg:self-center">
+        <div class="inline-flex rounded-xl p-1 bg-[var(--secondary)] border border-[var(--border)]">
+          <button id="btn-mode-slide" onclick="setViewMode('slide')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm">
+            簡報投影片模式
+          </button>
+          <button id="btn-mode-all" onclick="setViewMode('all')" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)]">
+            全覽儀表板模式
+          </button>
+        </div>
+
+        <div id="slide-controls" class="inline-flex items-center gap-1.5 bg-[var(--secondary)] border border-[var(--border)] rounded-xl p-1">
+          <button onclick="prevSlide()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-[var(--card)] transition" title="上一頁 (←)">
+            ◀ 上一頁
+          </button>
+          <span id="slide-counter" class="px-2 text-xs font-mono font-semibold text-[var(--foreground)]">
+            1 / 5
+          </span>
+          <button onclick="nextSlide()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-[var(--card)] transition" title="下一頁 (→)">
+            下一頁 ▶
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-4 pt-4 border-t border-[var(--border)]">
+      <button onclick="goToSlide(0)" id="nav-tab-0" class="nav-tab text-left p-2.5 rounded-xl border transition-all">
+        <div class="text-xs font-bold text-amber-500">PART 01</div>
+        <div class="text-xs font-semibold mt-0.5 truncate">一、思維轉向：三大舊戰略</div>
+      </button>
+      <button onclick="goToSlide(1)" id="nav-tab-1" class="nav-tab text-left p-2.5 rounded-xl border transition-all">
+        <div class="text-xs font-bold text-rose-500">PART 02</div>
+        <div class="text-xs font-semibold mt-0.5 truncate">威脅四要素與政治右傾</div>
+      </button>
+      <button onclick="goToSlide(2)" id="nav-tab-2" class="nav-tab text-left p-2.5 rounded-xl border transition-all">
+        <div class="text-xs font-bold text-sky-500">PART 03</div>
+        <div class="text-xs font-semibold mt-0.5 truncate">二、對外戰略三大支柱</div>
+      </button>
+      <button onclick="goToSlide(3)" id="nav-tab-3" class="nav-tab text-left p-2.5 rounded-xl border transition-all">
+        <div class="text-xs font-bold text-emerald-500">PART 04</div>
+        <div class="text-xs font-semibold mt-0.5 truncate">三、2026 區域戰略互動地圖</div>
+      </button>
+      <button onclick="goToSlide(4)" id="nav-tab-4" class="nav-tab text-left p-2.5 rounded-xl border transition-all col-span-2 sm:col-span-1">
+        <div class="text-xs font-bold text-purple-500">PART 05</div>
+        <div class="text-xs font-semibold mt-0.5 truncate">四方權力重組與以西結書</div>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ==========================================
+       SLIDE 1: 一、思維轉向 (Paradigm Shift)
+       ========================================== -->
+  <section id="slide-0" class="slide-section fade-in space-y-5 mb-6">
+    <!-- Core Paradigm Shift Banner -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-[var(--border)]">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-amber-500">Chapter 01 · Strategic Paradigm Shift</span>
+          <h2 class="text-lg md:text-xl font-bold mt-0.5">一、思維轉向：打破二十年國家安全假設</h2>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1">
+            哈瑪斯於 2023 年 10 月 7 日對以色列的恐怖攻擊，迫使以色列進行自 <strong class="text-[var(--foreground)]">1973 年贖罪日戰爭</strong>以來最劇烈的戰略大轉向。
+          </p>
+        </div>
+        <!-- Interactive Era Switch -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="highlightDoctrine('pre')" id="doc-btn-pre" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--secondary)] text-[var(--foreground)]">
+            聚焦：10/7 前舊思維
+          </button>
+          <button onclick="highlightDoctrine('post')" id="doc-btn-post" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] bg-[var(--secondary)] text-[var(--foreground)]">
+            聚焦：10/7 後新思維
+          </button>
+          <button onclick="highlightDoctrine('both')" id="doc-btn-both" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+            並列對照
+          </button>
+        </div>
+      </div>
+
+      <!-- Before vs After Core Formula -->
+      <div class="grid grid-cols-1 md:grid-cols-11 gap-4 items-center mt-5">
+        <div id="doctrine-pre-box" class="md:col-span-5 p-4 rounded-xl border border-sky-500/30 bg-sky-500/5 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-sky-500/20 text-sky-600 dark:text-sky-300">2003 – 2023.10.06</span>
+            <span class="text-xs text-[var(--muted-foreground)]">核心假設：衝突可以管控</span>
+          </div>
+          <h3 class="text-base md:text-lg font-bold mt-2 text-sky-600 dark:text-sky-400">
+            嚇阻與管控衝突
+          </h3>
+          <p class="text-xs font-mono text-[var(--muted-foreground)]">Deterrence &amp; Conflict Management</p>
+          <p class="text-sm mt-2 text-[var(--foreground)]">
+            承認無法徹底消滅對手，透過科技防禦、定期削弱與經濟紅利將暴力控制在可承受範圍。
+          </p>
+        </div>
+
+        <div class="md:col-span-1 flex flex-col items-center justify-center py-1">
+          <div class="w-9 h-9 rounded-full bg-rose-500/15 border border-rose-500/40 flex items-center justify-center text-rose-500 font-bold text-sm">
+            ➔
+          </div>
+          <span class="text-xs font-bold text-rose-500 mt-1">10/7 突襲</span>
+        </div>
+
+        <div id="doctrine-post-box" class="md:col-span-5 p-4 rounded-xl border border-rose-500/40 bg-rose-500/10 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/20 text-rose-600 dark:text-rose-300">2023.10.07 之後</span>
+            <span class="text-xs text-[var(--muted-foreground)]">核心判準：零容忍物理威脅</span>
+          </div>
+          <h3 class="text-base md:text-lg font-bold mt-2 text-rose-600 dark:text-rose-400">
+            根除攻擊能力
+          </h3>
+          <p class="text-xs font-mono text-[var(--muted-foreground)]">Capability Eradication</p>
+          <p class="text-sm mt-2 text-[var(--foreground)]">
+            不再依賴對敵方「意圖」的揣測；只要敵方具備威脅以色列生存的「物理能力」，即主動出擊徹底摧毀。
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 Pillars of Pre-10/7 Conflict Management Strategy -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <div>
+          <h3 class="text-base font-bold">過去以色列對加薩及黎巴嫩南部的「衝突管控」三大戰略支柱</h3>
+          <p class="text-xs text-[var(--muted-foreground)]">點擊下方任一戰略卡片，查看具體作法與 10月7日 揭露的致命盲點</p>
+        </div>
+        <span class="text-xs px-2.5 py-1 rounded-lg bg-[var(--secondary)] text-[var(--secondary-foreground)] font-medium self-start">
+          互動卡片：點擊切換詳情
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Pillar 1 -->
+        <div onclick="selectPillar(0)" id="pillar-card-0" class="cursor-pointer rounded-xl p-4 border-2 border-amber-500 bg-amber-500/5 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400">戰略 01</span>
+            <span class="text-xs font-mono text-[var(--muted-foreground)]">Deterrence of Denial</span>
+          </div>
+          <h4 class="text-base font-bold">拒止性嚇阻</h4>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1.5">
+            以地下高科技隔離牆、鐵穹防禦系統與精準打擊武器，讓敵對勢力「不敢隨意進犯」。
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-[var(--foreground)] border-t border-[var(--border)] pt-3">
+            <li>• <strong>地下高科技隔離牆</strong>：配備感測器、遠距遙控機槍塔與雷達</li>
+            <li>• <strong>立體防空與精準武力</strong>：鐵穹防禦系統（Iron Dome）攔截火箭彈</li>
+            <li>• <strong>核心邏輯</strong>：透過強大科技與軍事實力建立心理與物理高牆</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div onclick="selectPillar(1)" id="pillar-card-1" class="cursor-pointer rounded-xl p-4 border border-[var(--border)] bg-[var(--secondary)]/40 hover:border-amber-500/50 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">戰略 02</span>
+            <span class="text-xs font-mono text-[var(--muted-foreground)]">Mowing the Grass</span>
+          </div>
+          <h4 class="text-base font-bold">割草戰略</h4>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1.5">
+            承認無法靠政治或軍事徹底消滅哈瑪斯意識形態，採取「只壓制、不根除」的定期風險管理。
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-[var(--foreground)] border-t border-[var(--border)] pt-3">
+            <li>• <strong>週期性有限打擊</strong>：定點清除、空襲、摧毀軍火庫與新兵</li>
+            <li>• <strong>修剪草坪比喻</strong>：當敵人武裝威脅「長高」到一定程度就出兵「割矮」一遍</li>
+            <li>• <strong>核心邏輯</strong>：將對方的暴力與威脅壓制在可控範圍內，做長期風險管理</li>
+          </ul>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div onclick="selectPillar(2)" id="pillar-card-2" class="cursor-pointer rounded-xl p-4 border border-[var(--border)] bg-[var(--secondary)]/40 hover:border-amber-500/50 transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-500/20 text-purple-600 dark:text-purple-400">戰略 03</span>
+            <span class="text-xs font-mono text-[var(--muted-foreground)]">Economic Incentives</span>
+          </div>
+          <h4 class="text-base font-bold">經濟誘因（「買安靜」）</h4>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1.5">
+            納坦雅胡政府期望用經濟利益引導哈瑪斯從「恐怖組織」走向需負治理責任的「地方政府」。
+          </p>
+          <ul class="mt-3 space-y-1.5 text-xs text-[var(--foreground)] border-t border-[var(--border)] pt-3">
+            <li>• <strong>開放工作證與資金</strong>：向加薩居民發放工作證，2018年起打破經濟封鎖</li>
+            <li>• <strong>卡達現金手提箱</strong>：以色列安全機構護送批准卡達外交官帶數百萬美元現金跨邊境入加薩</li>
+            <li>• <strong>突襲前夕誤判</strong>：2023年9月（10/7前一個月）以色列甚至主動要求卡達「加碼」金援以平息邊境騷亂</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Dynamic Insight Callout for Selected Pillar -->
+      <div id="pillar-detail-banner" class="mt-4 p-4 rounded-xl bg-[var(--secondary)] border border-[var(--border)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <span id="pillar-detail-tag" class="text-xs font-bold text-amber-500 uppercase">戰略 01 深度檢視 · 拒止性嚇阻</span>
+          <p id="pillar-detail-text" class="text-sm text-[var(--foreground)] mt-1">
+            過度依賴地面感測器、遙控機槍塔與地下隔離牆，卻忽略當敵方以無人機癱瘓通訊塔、搭配推土機與滑翔傘飽和突襲時，單純的被動防線瞬間失效。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SLIDE 2: 威脅四要素與以色列政局右傾
+       ========================================== -->
+  <section id="slide-1" class="slide-section hidden fade-in space-y-5 mb-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[var(--border)]">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-500">Chapter 02 · Threat Theory &amp; Domestic Shift</span>
+          <h2 class="text-lg md:text-xl font-bold mt-0.5">國際政治「威脅四要素」互動檢測與政局轉向</h2>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1">
+            課堂思考題：以色列過去的衝突管控策略，成功管控了「威脅」的哪些要素？又在哪一個要素徹底失算？
+          </p>
+        </div>
+        <button onclick="revealAllThreatElements()" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500 text-white hover:bg-rose-600 transition shrink-0 self-start md:self-center">
+          一鍵揭曉課堂解答 (Ans)
+        </button>
+      </div>
+
+      <!-- Interactive Threat 4 Elements -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-5">
+        <!-- Element 1 -->
+        <div onclick="toggleThreatCard(0)" id="threat-card-0" class="cursor-pointer p-4 rounded-xl border border-[var(--border)] bg-[var(--secondary)]/50 hover:border-emerald-500/50 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[var(--muted-foreground)]">要素 01</span>
+            <span id="threat-badge-0" class="text-xs px-2 py-0.5 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--border)]">點擊揭曉</span>
+          </div>
+          <h3 class="text-base font-bold mt-2">綜合國力</h3>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">Comprehensive Power</p>
+          <p id="threat-desc-0" class="text-xs mt-3 text-[var(--muted-foreground)]">
+            以巴雙方在經濟規模、科技與正規軍力上的懸殊差距，是否被以色列成功掌握？
+          </p>
+        </div>
+
+        <!-- Element 2 -->
+        <div onclick="toggleThreatCard(1)" id="threat-card-1" class="cursor-pointer p-4 rounded-xl border border-[var(--border)] bg-[var(--secondary)]/50 hover:border-emerald-500/50 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[var(--muted-foreground)]">要素 02</span>
+            <span id="threat-badge-1" class="text-xs px-2 py-0.5 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--border)]">點擊揭曉</span>
+          </div>
+          <h3 class="text-base font-bold mt-2">地緣毗鄰性</h3>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">Geographic Proximity</p>
+          <p id="threat-desc-1" class="text-xs mt-3 text-[var(--muted-foreground)]">
+            加薩走廊與黎巴嫩南部緊鄰以色列邊境的地理風險，是否納入防線管控？
+          </p>
+        </div>
+
+        <!-- Element 3 -->
+        <div onclick="toggleThreatCard(2)" id="threat-card-2" class="cursor-pointer p-4 rounded-xl border border-[var(--border)] bg-[var(--secondary)]/50 hover:border-emerald-500/50 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[var(--muted-foreground)]">要素 03</span>
+            <span id="threat-badge-2" class="text-xs px-2 py-0.5 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--border)]">點擊揭曉</span>
+          </div>
+          <h3 class="text-base font-bold mt-2">攻擊能力</h3>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">Offensive Capability</p>
+          <p id="threat-desc-2" class="text-xs mt-3 text-[var(--muted-foreground)]">
+            透過「割草戰略」定期摧毀軍火庫與鐵穹防禦，以色列認為已壓制其武力上限。
+          </p>
+        </div>
+
+        <!-- Element 4 -->
+        <div onclick="toggleThreatCard(3)" id="threat-card-3" class="cursor-pointer p-4 rounded-xl border border-[var(--border)] bg-[var(--secondary)]/50 hover:border-rose-500/50 transition-all">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-[var(--muted-foreground)]">要素 04</span>
+            <span id="threat-badge-3" class="text-xs px-2 py-0.5 rounded bg-[var(--card)] text-[var(--muted-foreground)] border border-[var(--border)]">點擊揭曉</span>
+          </div>
+          <h3 class="text-base font-bold mt-2">意圖的不確定性</h3>
+          <p class="text-xs text-[var(--muted-foreground)] mt-1">Uncertainty of Intentions</p>
+          <p id="threat-desc-3" class="text-xs mt-3 text-[var(--muted-foreground)]">
+            哈瑪斯接受卡達金援與工作證的背後，真正的終極戰略意圖是什麼？
+          </p>
+        </div>
+      </div>
+
+      <!-- Explanation Box -->
+      <div class="mt-5 p-4 rounded-xl border border-rose-500/30 bg-rose-500/5">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <h4 class="text-sm font-bold text-rose-600 dark:text-rose-400">
+              核心解答：成功管控了「綜合國力、地緣毗鄰性、攻擊能力」，卻徹底誤判「意圖」！
+            </h4>
+            <p class="text-sm text-[var(--foreground)] mt-1">
+              以色列以為哈瑪斯攻擊以色列的意圖只是為了<strong>「經濟與生存」</strong>；但 10月7日後發現根本不是——哈瑪斯的真正目的是<strong>徹底消滅以色列（"From the river to the sea"）</strong>。
+            </p>
+          </div>
+          <div class="px-3 py-2 rounded-lg bg-[var(--card)] border border-[var(--border)] shrink-0 text-xs">
+            <div class="font-bold text-[var(--foreground)]">全新戰略判準：</div>
+            <div class="text-[var(--muted-foreground)]">不看「意圖」➔ 只看「物理能力」</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Domestic Political Shift & Election Chart -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+        <h3 class="text-base font-bold">以色列國內政局與主流民意大幅右傾</h3>
+        <p class="text-sm text-[var(--muted-foreground)] mt-1">
+          遇襲後的創傷徹底重塑以色列政治光譜，對巴勒斯坦建國與哈瑪斯的態度達成跨黨派強硬共識：
+        </p>
+
+        <div class="mt-4 space-y-3">
+          <div class="p-3.5 rounded-xl bg-[var(--secondary)] border border-[var(--border)]">
+            <div class="text-xs font-bold text-amber-500">定性轉變：拒絕「兩國方案」</div>
+            <p class="text-sm mt-1">
+              以色列主流民意與政界將「巴勒斯坦建國」直接視為<strong>「對恐怖主義的獎勵」</strong>與直接的<strong>生存威脅</strong>。
+            </p>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-[var(--secondary)] border border-[var(--border)]">
+            <div class="text-xs font-bold text-rose-500">選舉席次結構劇變（120 席國會分布示意）</div>
+            <p class="text-sm mt-1">
+              在這次選舉中，傳統左派僅能拿下 <strong>8 席</strong>，其餘席次皆為<strong>中右翼到極右翼政黨</strong>；就連傳統左派也轉變立場，改為主張<strong>徹底消滅哈瑪斯</strong>。
+            </p>
+
+            <!-- Seat Bar Visualization -->
+            <div class="mt-3">
+              <div class="flex justify-between text-xs font-semibold mb-1.5">
+                <span class="text-sky-500">傳統左派：8 席 (6.7%) — 亦轉向主張消滅哈瑪斯</span>
+                <span class="text-rose-500">中右翼至極右翼政黨：壓倒性多數 (93.3%)</span>
+              </div>
+              <div class="w-full h-4 rounded-full overflow-hidden flex bg-[var(--card)] border border-[var(--border)]">
+                <div class="bg-sky-500 h-full flex items-center justify-center text-[12px] text-white font-bold" style="width: 8%"></div>
+                <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-600 h-full" style="width: 92%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary Decision Tree -->
+      <div class="lg:col-span-5 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+        <div>
+          <span class="text-xs font-bold uppercase text-purple-500">Strategic Logic Flow</span>
+          <h3 class="text-base font-bold mt-0.5">戰略判準轉向邏輯鏈</h3>
+          <div class="mt-4 space-y-2.5 text-sm">
+            <div class="p-3 rounded-xl border border-[var(--border)] bg-[var(--secondary)]/40 flex items-start gap-3">
+              <span class="px-2 py-0.5 rounded bg-sky-500/20 text-sky-500 font-bold text-xs shrink-0 mt-0.5">步驟 1</span>
+              <div>
+                <strong>認知破產</strong>：卡達金援與工作證無法改變哈瑪斯「消滅以色列」的終極意圖。
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-[var(--border)] bg-[var(--secondary)]/40 flex items-start gap-3">
+              <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold text-xs shrink-0 mt-0.5">步驟 2</span>
+              <div>
+                <strong>判準重設</strong>：放棄揣測敵方「意圖」，改以敵方是否具備「物理攻擊能力」為唯一判準。
+              </div>
+            </div>
+            <div class="p-3 rounded-xl border border-rose-500/40 bg-rose-500/10 flex items-start gap-3">
+              <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 font-bold text-xs shrink-0 mt-0.5">步驟 3</span>
+              <div>
+                <strong>先發制人</strong>：只要周邊勢力具備威脅生存的物理能力，必須主動出擊將其徹底摧毀。
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4 pt-3 border-t border-[var(--border)] text-xs text-[var(--muted-foreground)]">
+          此一框架直接決定了以色列在 2024–2026 年對加薩、黎巴嫩真主黨、敘利亞與伊朗本土的全面攻勢。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SLIDE 3: 二、對外戰略 (External Strategy)
+       ========================================== -->
+  <section id="slide-2" class="slide-section hidden fade-in space-y-5 mb-6">
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-[var(--border)]">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-sky-500">Chapter 03 · External Military &amp; Foreign Strategy</span>
+          <h2 class="text-lg md:text-xl font-bold mt-0.5">二、對外戰略：三大軍事與地緣政策轉變</h2>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1">
+            從「閃電戰與有限報復」走向「多線持久戰、斬首清剿與直接打擊伊朗本土」
+          </p>
+        </div>
+      </div>
+
+      <!-- 3 Pillars Comparison Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">
+        <!-- Pillar 1: 擴大建軍 -->
+        <div class="rounded-2xl border border-[var(--border)] bg-[var(--secondary)]/30 p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-sky-500/20 text-sky-500">對外戰略 01</span>
+              <span class="text-xs font-mono text-[var(--muted-foreground)]">Force Expansion</span>
+            </div>
+            <h3 class="text-lg font-bold mt-3">1. 擴大建軍與法制化</h3>
+
+            <div class="mt-4 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+              <div class="text-xs font-bold text-[var(--muted-foreground)]">【過去二十年】小而精閃電戰</div>
+              <p class="text-sm mt-1">
+                大幅裁減裝甲旅與常備陸軍，轉向依賴<strong>空軍精準打擊</strong>與<strong>情報優勢</strong>的短期閃電戰。
+              </p>
+            </div>
+
+            <div class="my-2 text-center text-xs font-bold text-sky-500">▼ 10月7日後轉向 ▼</div>
+
+            <div class="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30">
+              <div class="text-xs font-bold text-sky-500">【10月7日後】多線持久消耗戰</div>
+              <ul class="text-sm mt-1.5 space-y-1.5">
+                <li>• 重新<strong>擴編裝甲與步兵師</strong></li>
+                <li>• <strong>延長義務役與預備役</strong>服役期限</li>
+                <li>• <strong>2025年推動《國家安全戰略法》</strong>：將新的「攻勢防衛教義」正式法制化</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 2: 打破與真主黨交戰規則 -->
+        <div class="rounded-2xl border border-[var(--border)] bg-[var(--secondary)]/30 p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-500">對外戰略 02</span>
+              <span class="text-xs font-mono text-[var(--muted-foreground)]">Rules of Engagement</span>
+            </div>
+            <h3 class="text-lg font-bold mt-3">2. 打破與真主黨的交戰規則</h3>
+
+            <div class="mt-4 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+              <div class="text-xs font-bold text-[var(--muted-foreground)]">【過去】有限度對等報復</div>
+              <p class="text-sm mt-1">
+                在北方邊境與黎巴嫩真主黨維持心照不宣、有限度的<strong>「對等報復」</strong>，避免全面戰爭。
+              </p>
+            </div>
+
+            <div class="my-2 text-center text-xs font-bold text-amber-500">▼ 2024下半年轉向 ▼</div>
+
+            <div class="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30">
+              <div class="text-xs font-bold text-amber-500">【10月7日後】全面瓦解指管與清剿</div>
+              <ul class="text-sm mt-1.5 space-y-1.5">
+                <li>• 為解決<strong>北方數萬居民撤離危機</strong>，不再容忍精銳<strong>「拉德萬部隊」</strong>駐紮邊境</li>
+                <li>• <strong>2024下半年呼叫器引爆</strong>重創通訊與基層骨幹</li>
+                <li>• <strong>精準斬首高層（含納斯魯拉）</strong>並派地面部隊推進黎巴嫩南部</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 3: 直接打擊伊朗本土 -->
+        <div class="rounded-2xl border border-[var(--border)] bg-[var(--secondary)]/30 p-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/20 text-rose-500">對外戰略 03</span>
+              <span class="text-xs font-mono text-[var(--muted-foreground)]">Direct Strike on Iran</span>
+            </div>
+            <h3 class="text-lg font-bold mt-3">3. 從「打代理人」到「打伊朗本土」</h3>
+
+            <div class="mt-4 p-3 rounded-xl bg-[var(--card)] border border-[var(--border)]">
+              <div class="text-xs font-bold text-[var(--muted-foreground)]">【過去數十年】灰色地帶與代理人戰爭</div>
+              <p class="text-sm mt-1">
+                以伊雙方維持在<strong>敘利亞、紅海或網路空間</strong>進行代理人戰爭（Proxy War），避免本土正面交鋒。
+              </p>
+            </div>
+
+            <div class="my-2 text-center text-xs font-bold text-rose-500">▼ 2024–2026 轉向 ▼</div>
+
+            <div class="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30">
+              <div class="text-xs font-bold text-rose-500">【10月7日後】本土飛彈互擊與連番空襲</div>
+              <ul class="text-sm mt-1.5 space-y-1.5">
+                <li>• <strong>2024年</strong>：以伊雙方<strong>首次直接進行本土飛彈互擊</strong></li>
+                <li>• <strong>2024–2026年</strong>：美以對伊朗連番空襲，摧毀大部分<strong>本土空防能力</strong>並重創<strong>核設施</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       SLIDE 4: 三、區域情勢 & 2026 互動戰略地圖
+       ========================================== -->
+  <section id="slide-3" class="slide-section hidden fade-in space-y-5 mb-6">
+    <iframe id="part4-map-frame" title="2026 中東地緣政治戰略地圖" srcdoc="&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;zh-Hant&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover&quot;&gt;
+  &lt;title&gt;2026 中東地緣政治戰略地圖 | 電腦版與手機版雙介面儀表板&lt;/title&gt;
+
+  &lt;!-- Leaflet.js 地圖核心庫 (開源、免費且流暢) --&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/leaflet@1.9.4/dist/leaflet.css&quot; /&gt;
+  &lt;script src=&quot;https://unpkg.com/leaflet@1.9.4/dist/leaflet.js&quot;&gt;&lt;/script&gt;
+
+  &lt;style&gt;
+    /* ==========================================================================
+       1. 全域變數、色彩系統與 CSS Reset
+       ========================================================================== */
+    :root {
+      --gm-blue: #1a73e8;
+      --gm-blue-hover: #1557b0;
+      --gm-surface: #ffffff;
+      --gm-surface-variant: #f8f9fa;
+      --gm-text-primary: #202124;
+      --gm-text-secondary: #5f6368;
+      --gm-border: #dadce0;
+      --gm-shadow: 0 1px 3px rgba(60,64,67,0.25), 0 4px 8px 3px rgba(60,64,67,0.12);
+      --gm-shadow-lg: 0 4px 12px rgba(60,64,67,0.28), 0 10px 24px 6px rgba(60,64,67,0.15);
+
+      /* 陣營色彩 (符合 Google Material 語意色彩) */
+      --shia-color: #d93025;      /* 什葉派紅 */
+      --shia-bg: #fce8e6;
+      --sunni-color: #188038;     /* 遜尼派綠 */
+      --sunni-bg: #e6f4ea;
+      --us-color: #f29900;        /* 美軍琥珀金 */
+      --us-bg: #fef7e0;
+      --choke-color: #1a73e8;     /* 咽喉海峽藍 */
+      --choke-bg: #e8f0fe;
+
+      /* 安全區域墊距 (針對行動裝置異形螢幕 Notch / Home Bar) */
+      --sat: env(safe-area-inset-top, 0px);
+      --sab: env(safe-area-inset-bottom, 0px);
+      --sal: env(safe-area-inset-left, 0px);
+      --sar: env(safe-area-inset-right, 0px);
+
+      --font-family: -apple-system, BlinkMacSystemFont, &quot;Google Sans&quot;, &quot;Segoe UI&quot;, Roboto, &quot;PingFang TC&quot;, &quot;Microsoft JhengHei&quot;, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      font-family: var(--font-family);
+      color: var(--gm-text-primary);
+      background: #1e293b;
+      touch-action: manipulation;
+    }
+
+    /* ==========================================================================
+       2. 頂部全域模式切換列 (電腦版 vs 手機版切換按鈕)
+       ========================================================================== */
+    .global-mode-switcher-bar {
+      position: fixed;
+      top: 10px;
+      right: 14px;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 5px 8px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+      transition: all 0.3s ease;
+    }
+
+    .mode-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+    }
+
+    .mode-btn:hover {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .mode-btn.active {
+      background: var(--gm-blue);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.45);
+    }
+
+    .mode-btn .btn-icon {
+      font-size: 1rem;
+    }
+
+    /* 手機版模擬外框切換按鈕 (僅在桌機上切換為手機版時顯示) */
+    .frame-toggle-btn {
+      display: none;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .frame-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #fff;
+    }
+
+    /* ==========================================================================
+       3. 核心容器結構 (App Viewport &amp; Layout Modes)
+       ========================================================================== */
+    #rootContainer {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      background: #0f172a;
+    }
+
+    /* 主視窗容器：可變形為桌機滿版，或手機模擬外殼 */
+    #appViewport {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #e5e3df;
+      overflow: hidden;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                  border-radius 0.35s ease,
+                  box-shadow 0.35s ease;
+    }
+
+    /* 地圖容器 */
+    #map {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    /* ==========================================================================
+       4. 電腦版專屬介面 (Desktop UI Mode)
+       ========================================================================== */
+    .mode-desktop #appViewport {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+    }
+
+    /* 隱藏手機端專屬元素 */
+    .mode-desktop .mobile-only {
+      display: none !important;
+    }
+
+    /* 電腦端頂部浮動搜尋卡片與篩選列 */
+    .desktop-top-bar {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+      max-width: 460px;
+    }
+    .desktop-top-bar &gt; * {
+      pointer-events: auto;
+    }
+
+    .desktop-search-card {
+      background: var(--gm-surface);
+      border-radius: 28px;
+      box-shadow: var(--gm-shadow);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      transition: box-shadow 0.25s ease;
+    }
+    .desktop-search-card:hover {
+      box-shadow: var(--gm-shadow-lg);
+    }
+    .desktop-brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      color: var(--gm-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+    .desktop-search-text {
+      flex: 1;
+    }
+    .desktop-search-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #202124;
+    }
+    .desktop-search-subtitle {
+      font-size: 0.72rem;
+      color: var(--gm-text-secondary);
+    }
+    .desktop-quick-select {
+      border: 1px solid var(--gm-border);
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.78rem;
+      background: #f8f9fa;
+      color: var(--gm-text-primary);
+      cursor: pointer;
+      outline: none;
+      font-weight: 600;
+      max-width: 140px;
+    }
+
+    /* 電腦版晶片列 */
+    .desktop-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .desktop-chip-btn {
+      background: var(--gm-surface);
+      border: 1px solid var(--gm-border);
+      border-radius: 9999px;
+      padding: 7px 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--gm-text-secondary);
+      box-shadow: 0 1px 3px rgba(60,64,67,0.18);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .desktop-chip-btn:hover {
+      background: #f8f9fa;
+      color: var(--gm-text-primary);
+    }
+    .desktop-chip-btn.active[data-filter=&quot;all&quot;] {
+      background: #3c4043;
+      color: #fff;
+      border-color: #3c4043;
+    }
+    .desktop-chip-btn.active[data-filter=&quot;shia&quot;] {
+      background: var(--shia-bg);
+      color: var(--shia-color);
+      border-color: var(--shia-color);
+    }
+    .desktop-chip-btn.active[data-filter=&quot;sunni&quot;] {
+      background: var(--sunni-bg);
+      color: var(--sunni-color);
+      border-color: var(--sunni-color);
+    }
+    .desktop-chip-btn.active[data-filter=&quot;us-military&quot;] {
+      background: var(--us-bg);
+      color: #b06000;
+      border-color: var(--us-color);
+    }
+
+    /* 電腦端左側側邊情報抽屜 (Desktop Left Sheet) */
+    .desktop-side-sheet {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 430px;
+      height: 100%;
+      background: var(--gm-surface);
+      box-shadow: var(--gm-shadow-lg);
+      z-index: 1050;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-105%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .desktop-side-sheet.open {
+      transform: translateX(0);
+    }
+
+    /* 電腦版底圖風格切換列與圖例 */
+    .desktop-bottom-left {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 990;
+      background: var(--gm-surface);
+      border-radius: 20px;
+      box-shadow: var(--gm-shadow);
+      padding: 4px 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .desktop-style-btn {
+      background: none;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gm-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .desktop-style-btn.active {
+      background: #e8f0fe;
+      color: var(--gm-blue);
+    }
+
+    .desktop-bottom-right {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      z-index: 990;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .desktop-bottom-right &gt; * {
+      pointer-events: auto;
+    }
+    .desktop-legend-card {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      box-shadow: var(--gm-shadow);
+      padding: 12px 16px;
+      font-size: 0.78rem;
+      min-width: 260px;
+    }
+    .legend-title {
+      font-weight: 800;
+      color: #3c4043;
+      margin-bottom: 8px;
+      border-bottom: 1px solid #f1f3f4;
+      padding-bottom: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 5px;
+      color: #5f6368;
+    }
+    .legend-color-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      opacity: 0.85;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       5. 手機版專屬介面 (Mobile UI Mode - 專為手機重構之流體介面)
+       ========================================================================== */
+    /* 隱藏電腦版專屬元素 */
+    .mode-mobile .desktop-only {
+      display: none !important;
+    }
+
+    /* 當在桌機畫面上切換為「手機版」時，模擬高階智慧型手機外殼 (iPhone 16 Pro Mockup) */
+    @media (min-width: 769px) {
+      .mode-mobile.with-frame #appViewport {
+        width: 395px;
+        height: 844px;
+        max-height: calc(100vh - 40px);
+        border-radius: 46px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.65), 0 0 0 10px #1e293b, 0 0 0 12px #334155;
+        position: relative;
+      }
+      .mode-mobile.with-frame .frame-toggle-btn {
+        display: inline-flex;
+      }
+      .mode-mobile.no-frame #appViewport {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+      }
+      .mode-mobile.no-frame .frame-toggle-btn {
+        display: inline-flex;
+      }
+    }
+
+    /* 真正行動裝置 (螢幕寬度小於 768px) 自動滿版 */
+    @media (max-width: 768px) {
+      .mode-mobile #appViewport {
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+      }
+      .frame-toggle-btn {
+        display: none !important;
+      }
+    }
+
+    /* 模擬手機頂部動態島 / 瀏海與狀態列 (僅在桌機模擬外框時顯現) */
+    .mobile-mockup-status-bar {
+      display: none;
+    }
+    @media (min-width: 769px) {
+      .mode-mobile.with-frame .mobile-mockup-status-bar {
+        display: flex;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 44px;
+        z-index: 2000;
+        padding: 0 20px;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1e293b;
+        pointer-events: none;
+      }
+      .mobile-dynamic-island {
+        width: 110px;
+        height: 26px;
+        background: #000;
+        border-radius: 20px;
+        margin: 0 auto;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 10px;
+      }
+    }
+
+    /* 手機端頂部懸浮控制艙 (Mobile Top Island) */
+    .mobile-top-container {
+      position: absolute;
+      top: calc(10px + var(--sat));
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .mobile-top-container &gt; * {
+      pointer-events: auto;
+    }
+
+    /* 手機版搜尋膠囊 */
+    .mobile-search-pill {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 24px;
+      box-shadow: 0 2px 10px rgba(60,64,67,0.18);
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mobile-brand-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e8f0fe;
+      color: var(--gm-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .mobile-search-info {
+      flex: 1;
+      overflow: hidden;
+    }
+    .mobile-search-main {
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: #202124;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mobile-search-sub {
+      font-size: 0.65rem;
+      color: var(--gm-text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mobile-quick-jump-select {
+      background: #f1f3f4;
+      border: 1px solid var(--gm-border);
+      border-radius: 16px;
+      padding: 5px 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #202124;
+      outline: none;
+      max-width: 105px;
+    }
+
+    /* 手機版橫向滑動晶片列 (Touch Horizontal Scroll) */
+    .mobile-chips-scroll {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 2px 4px 2px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .mobile-chips-scroll::-webkit-scrollbar {
+      display: none;
+    }
+    .mobile-chip-btn {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 9999px;
+      padding: 5px 12px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--gm-text-secondary);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .mobile-chip-btn.active[data-filter=&quot;all&quot;] {
+      background: #202124;
+      color: #fff;
+    }
+    .mobile-chip-btn.active[data-filter=&quot;shia&quot;] {
+      background: var(--shia-bg);
+      color: var(--shia-color);
+      border-color: var(--shia-color);
+    }
+    .mobile-chip-btn.active[data-filter=&quot;sunni&quot;] {
+      background: var(--sunni-bg);
+      color: var(--sunni-color);
+      border-color: var(--sunni-color);
+    }
+    .mobile-chip-btn.active[data-filter=&quot;us-military&quot;] {
+      background: var(--us-bg);
+      color: #b06000;
+      border-color: var(--us-color);
+    }
+
+    /* 手機版地圖右側懸浮快捷工具鈕 (FABs) */
+    .mobile-floating-tools {
+      position: absolute;
+      top: calc(100px + var(--sat));
+      right: 12px;
+      z-index: 990;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .mobile-fab-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      color: #3c4043;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mobile-fab-btn:active {
+      transform: scale(0.92);
+      background: #f1f3f4;
+    }
+
+    /* 手機版底部地標快捷滑動 Dock (Quick Focus Dock) */
+    .mobile-focus-dock {
+      position: absolute;
+      bottom: calc(85px + var(--sab));
+      left: 10px;
+      right: 10px;
+      z-index: 995;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      pointer-events: auto;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .mobile-focus-dock::-webkit-scrollbar {
+      display: none;
+    }
+    .dock-pill {
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 18px;
+      padding: 5px 11px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #202124;
+      white-space: nowrap;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .dock-pill:active {
+      transform: scale(0.94);
+    }
+    .dock-pill.active {
+      background: var(--gm-blue);
+      color: #fff;
+      border-color: var(--gm-blue);
+    }
+
+    /* 手機版三段式底部抽屜 (Google Maps 3-Stage Bottom Sheet) */
+    .mobile-bottom-sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 88dvh;
+      background: var(--gm-surface);
+      border-radius: 22px 22px 0 0;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+      z-index: 1050;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(calc(88dvh - 80px - var(--sab))); /* 預設 Peek 狀態 */
+      transition: transform 0.38s cubic-bezier(0.2, 0.9, 0.3, 1);
+      padding-bottom: var(--sab);
+    }
+
+    /* 抽屜三種狀態 */
+    .mobile-bottom-sheet.state-peek {
+      transform: translateY(calc(88dvh - 80px - var(--sab)));
+    }
+    .mobile-bottom-sheet.state-half {
+      transform: translateY(42dvh);
+    }
+    .mobile-bottom-sheet.state-full {
+      transform: translateY(0);
+    }
+
+    /* 手機抽屜拖曳指示條 */
+    .mobile-sheet-handle-bar {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 0 4px 0;
+      cursor: grab;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+    .mobile-handle-pill {
+      width: 36px;
+      height: 4px;
+      border-radius: 9999px;
+      background: #dadce0;
+    }
+
+    /* 手機抽屜頂部 Banner (緊湊設計) */
+    .mobile-sheet-head {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      color: #fff;
+      padding: 10px 14px 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+    .mobile-head-left {
+      flex: 1;
+      overflow: hidden;
+    }
+    .mobile-head-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .mobile-head-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mobile-expand-indicator {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: #fff;
+      transition: transform 0.3s;
+    }
+    .mobile-bottom-sheet.state-full .mobile-expand-indicator {
+      transform: rotate(180deg);
+    }
+
+    /* 抽屜內 Peek 預覽簡評 (收合時也能一目了然) */
+    .mobile-peek-snippet {
+      padding: 4px 14px 6px 14px;
+      font-size: 0.74rem;
+      color: #5f6368;
+      background: #f8f9fa;
+      border-bottom: 1px solid #edf2f7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex-shrink: 0;
+    }
+
+    /* 手機抽屜滾動內容 */
+    .mobile-sheet-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+      -webkit-overflow-scrolling: touch;
+      line-height: 1.6;
+    }
+
+    /* 手機版情報卡片網格 */
+    .mobile-meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .mobile-meta-box {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 8px 10px;
+      border: 1px solid #edf2f7;
+    }
+    .mobile-meta-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--gm-text-secondary);
+      text-transform: uppercase;
+    }
+    .mobile-meta-val {
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--gm-text-primary);
+      margin-top: 2px;
+    }
+
+    /* 核心強調文字 (指定必備文本) */
+    .mobile-highlight-box {
+      background: #e8f0fe;
+      border-left: 4px solid var(--gm-blue);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 12px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #174ea6;
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    /* 抽屜內標題與段落 */
+    .mobile-sec-header {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--gm-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 14px 0 6px 0;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .mobile-sec-header::before {
+      content: &quot;&quot;;
+      width: 3px;
+      height: 10px;
+      background: var(--gm-blue);
+      border-radius: 2px;
+    }
+    .mobile-analysis-p {
+      font-size: 0.84rem;
+      color: #3c4043;
+      line-height: 1.65;
+      margin-bottom: 8px;
+    }
+
+    /* 手機版專屬時間線 */
+    .mobile-timeline {
+      list-style: none;
+      border-left: 2px solid #e8eaed;
+      padding-left: 12px;
+      margin-top: 8px;
+    }
+    .mobile-timeline-item {
+      position: relative;
+      margin-bottom: 10px;
+      font-size: 0.8rem;
+    }
+    .mobile-timeline-item::before {
+      content: &quot;&quot;;
+      position: absolute;
+      left: -17px;
+      top: 5px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gm-blue);
+      border: 2px solid #fff;
+    }
+    .mobile-tl-date {
+      font-weight: 800;
+      color: #174ea6;
+    }
+    .mobile-tl-desc {
+      color: #5f6368;
+    }
+
+    /* 手機版圖例彈出小卡 (可開關) */
+    .mobile-legend-modal {
+      display: none;
+      position: absolute;
+      top: calc(90px + var(--sat));
+      left: 14px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+      padding: 10px 14px;
+      font-size: 0.75rem;
+      max-width: 250px;
+    }
+    .mobile-legend-modal.show {
+      display: block;
+    }
+
+    /* ==========================================================================
+       6. Google Maps 自訂標記圖示 (SVG Custom Pin)
+       ========================================================================== */
+    .custom-gm-pin {
+      cursor: pointer;
+    }
+    .gm-pin-container {
+      position: relative;
+    }
+    .gm-pin-svg {
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .gm-pin-container:hover .gm-pin-svg,
+    .gm-pin-container:active .gm-pin-svg {
+      transform: translateY(-4px) scale(1.18);
+    }
+    .gm-pin-radar {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%, 50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: pin-ripple 2s infinite ease-out;
+    }
+    @keyframes pin-ripple {
+      0% { transform: translate(-50%, 50%) scale(0.6); opacity: 1; }
+      100% { transform: translate(-50%, 50%) scale(2.8); opacity: 0; }
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class=&quot;mode-desktop&quot;&gt;
+
+  &lt;!-- ==========================================================================
+       頂部全局切換控制列：電腦版 vs 手機版切換按鈕
+       ========================================================================== --&gt;
+  &lt;header class=&quot;global-mode-switcher-bar&quot;&gt;
+    &lt;button class=&quot;mode-btn active&quot; id=&quot;btnModeDesktop&quot; onclick=&quot;switchViewMode(&#x27;desktop&#x27;)&quot;&gt;
+      &lt;span class=&quot;btn-icon&quot;&gt;🖥️&lt;/span&gt;
+      &lt;span&gt;電腦版&lt;/span&gt;
+    &lt;/button&gt;
+    &lt;button class=&quot;mode-btn&quot; id=&quot;btnModeMobile&quot; onclick=&quot;switchViewMode(&#x27;mobile&#x27;)&quot;&gt;
+      &lt;span class=&quot;btn-icon&quot;&gt;📱&lt;/span&gt;
+      &lt;span&gt;手機版&lt;/span&gt;
+    &lt;/button&gt;
+    &lt;button class=&quot;frame-toggle-btn&quot; id=&quot;btnToggleFrame&quot; onclick=&quot;toggleMobileFrame()&quot; title=&quot;在桌機上切換手機模擬外框&quot;&gt;
+      &lt;span&gt;🔲 外框開關&lt;/span&gt;
+    &lt;/button&gt;
+  &lt;/header&gt;
+
+  &lt;!-- ==========================================================================
+       主視窗容器 (App Viewport)
+       ========================================================================== --&gt;
+  &lt;main id=&quot;rootContainer&quot;&gt;
+    &lt;div id=&quot;appViewport&quot;&gt;
+
+      &lt;!-- 模擬智慧型手機頂部外殼元素 (僅在桌機手機版外框模式時顯現) --&gt;
+      &lt;div class=&quot;mobile-mockup-status-bar mobile-only&quot;&gt;
+        &lt;span&gt;9:41&lt;/span&gt;
+        &lt;div class=&quot;mobile-dynamic-island&quot;&gt;&lt;/div&gt;
+        &lt;span&gt;5G 🔋&lt;/span&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 滿版 Leaflet 地圖畫布 --&gt;
+      &lt;div id=&quot;map&quot;&gt;&lt;/div&gt;
+
+      &lt;!-- ======================================================================
+           A. 電腦版專屬介面元素 (Desktop Mode Elements)
+           ====================================================================== --&gt;
+      &lt;!-- 1. 電腦版頂部懸浮搜尋卡片與篩選列 --&gt;
+      &lt;div class=&quot;desktop-top-bar desktop-only&quot;&gt;
+        &lt;div class=&quot;desktop-search-card&quot;&gt;
+          &lt;div class=&quot;desktop-brand-icon&quot;&gt;🗺️&lt;/div&gt;
+          &lt;div class=&quot;desktop-search-text&quot;&gt;
+            &lt;div class=&quot;desktop-search-title&quot;&gt;2026 中東地緣政治戰略地圖&lt;/div&gt;
+            &lt;div class=&quot;desktop-search-subtitle&quot;&gt;Axis of the Shia-Sunni Divide • 勢力範圍&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;select class=&quot;desktop-quick-select&quot; id=&quot;desktopQuickSelect&quot;&gt;
+            &lt;option value=&quot;&quot; disabled selected&gt;快速聚焦焦點...&lt;/option&gt;
+            &lt;option value=&quot;Iran&quot;&gt;🇮🇷 伊朗與什葉派權力核心&lt;/option&gt;
+            &lt;option value=&quot;SaudiArabia&quot;&gt;🇸🇦 沙烏地阿拉伯與遜尼派聯盟&lt;/option&gt;
+            &lt;option value=&quot;StraitOfHormuz&quot;&gt;⚓ 荷莫茲海峽咽喉點&lt;/option&gt;
+            &lt;option value=&quot;Azerbaijan&quot;&gt;🇦🇿 亞塞拜然 (3/5 越境襲擊)&lt;/option&gt;
+            &lt;option value=&quot;Bahrain&quot;&gt;🇧🇭 巴林第5艦隊 (3/9 飽和襲擊)&lt;/option&gt;
+            &lt;option value=&quot;USMed&quot;&gt;🚢 東地中海美軍打擊群&lt;/option&gt;
+            &lt;option value=&quot;USIndian&quot;&gt;🌊 印度洋支援梯隊&lt;/option&gt;
+            &lt;option value=&quot;Syria&quot;&gt;🇸🇾 敘利亞新局 (親土政權)&lt;/option&gt;
+            &lt;option value=&quot;Yemen&quot;&gt;🇾🇪 葉門胡塞武裝&lt;/option&gt;
+            &lt;option value=&quot;Turkey&quot;&gt;🇹🇷 土耳其 (《麥加協議》盟友)&lt;/option&gt;
+            &lt;option value=&quot;Pakistan&quot;&gt;🇵🇰 巴基斯坦 (核威懾夥伴)&lt;/option&gt;
+            &lt;option value=&quot;Egypt&quot;&gt;🇪🇬 埃及 (守護蘇伊士)&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 電腦版陣營篩選晶片列 --&gt;
+        &lt;div class=&quot;desktop-chips-row&quot;&gt;
+          &lt;button class=&quot;desktop-chip-btn active&quot; data-filter=&quot;all&quot;&gt;全部陣營&lt;/button&gt;
+          &lt;button class=&quot;desktop-chip-btn&quot; data-filter=&quot;shia&quot;&gt;🔴 什葉派陣營 (紅)&lt;/button&gt;
+          &lt;button class=&quot;desktop-chip-btn&quot; data-filter=&quot;sunni&quot;&gt;🟢 遜尼派陣營 (綠)&lt;/button&gt;
+          &lt;button class=&quot;desktop-chip-btn&quot; data-filter=&quot;us-military&quot;&gt;🟡 美軍部署 (金)&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 2. 電腦版左側滑入式情報側邊欄 (Desktop Left Sheet) --&gt;
+      &lt;aside class=&quot;desktop-side-sheet desktop-only&quot; id=&quot;desktopSideSheet&quot;&gt;
+        &lt;div style=&quot;background:linear-gradient(135deg, #1e293b, #0f172a); padding:18px 20px; color:#fff; position:relative;&quot; id=&quot;desktopSheetHead&quot;&gt;
+          &lt;button id=&quot;desktopCloseBtn&quot; style=&quot;position:absolute; top:12px; right:14px; width:32px; height:32px; border-radius:50%; background:rgba(0,0,0,0.45); border:none; color:#fff; font-size:1.2rem; cursor:pointer;&quot; title=&quot;關閉&quot;&gt;&amp;times;&lt;/button&gt;
+          &lt;div id=&quot;desktopSheetTag&quot; style=&quot;font-size:0.72rem; font-weight:700; padding:3px 8px; border-radius:4px; display:inline-block; margin-bottom:6px;&quot;&gt;陣營類別&lt;/div&gt;
+          &lt;h2 id=&quot;desktopSheetTitle&quot; style=&quot;font-size:1.35rem; font-weight:800; line-height:1.25;&quot;&gt;地點標題&lt;/h2&gt;
+        &lt;/div&gt;
+        &lt;div style=&quot;flex:1; overflow-y:auto; padding:18px 20px; line-height:1.65;&quot;&gt;
+          &lt;div style=&quot;display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;&quot;&gt;
+            &lt;div style=&quot;background:#f8f9fa; border-radius:8px; padding:8px 12px; border:1px solid #edf2f7;&quot;&gt;
+              &lt;div style=&quot;font-size:0.68rem; font-weight:700; color:#5f6368; text-transform:uppercase;&quot;&gt;核心領導階層&lt;/div&gt;
+              &lt;div id=&quot;desktopSheetLeader&quot; style=&quot;font-size:0.86rem; font-weight:700; color:#202124; margin-top:2px;&quot;&gt;-&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div style=&quot;background:#f8f9fa; border-radius:8px; padding:8px 12px; border:1px solid #edf2f7;&quot;&gt;
+              &lt;div style=&quot;font-size:0.68rem; font-weight:700; color:#5f6368; text-transform:uppercase;&quot;&gt;戰略行動焦點&lt;/div&gt;
+              &lt;div id=&quot;desktopSheetFocus&quot; style=&quot;font-size:0.86rem; font-weight:700; color:#202124; margin-top:2px;&quot;&gt;-&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+
+          &lt;div id=&quot;desktopSheetHighlight&quot; style=&quot;background:#e8f0fe; border-left:4px solid var(--gm-blue); border-radius:0 8px 8px 0; padding:12px 14px; font-size:0.92rem; font-weight:600; color:#174ea6; margin-bottom:16px;&quot;&gt;
+            核心戰略研析內容...
+          &lt;/div&gt;
+
+          &lt;div style=&quot;font-size:0.82rem; font-weight:800; color:#5f6368; text-transform:uppercase; margin-bottom:6px;&quot;&gt;地緣情報與戰略轉向研析&lt;/div&gt;
+          &lt;div id=&quot;desktopSheetAnalysis&quot; style=&quot;font-size:0.88rem; color:#3c4043; line-height:1.68; margin-bottom:16px;&quot;&gt;&lt;/div&gt;
+
+          &lt;div style=&quot;font-size:0.82rem; font-weight:800; color:#5f6368; text-transform:uppercase; margin-bottom:6px;&quot;&gt;2026 關鍵軍事行動記要&lt;/div&gt;
+          &lt;ul id=&quot;desktopSheetTimeline&quot; style=&quot;list-style:none; border-left:2px solid #e8eaed; padding-left:14px;&quot;&gt;&lt;/ul&gt;
+        &lt;/div&gt;
+      &lt;/aside&gt;
+
+      &lt;!-- 3. 電腦版左下角底圖風格切換 --&gt;
+      &lt;div class=&quot;desktop-bottom-left desktop-only&quot;&gt;
+        &lt;button class=&quot;desktop-style-btn active&quot; data-style=&quot;streets&quot;&gt;街道地圖&lt;/button&gt;
+        &lt;button class=&quot;desktop-style-btn&quot; data-style=&quot;osm&quot;&gt;開源 OSM&lt;/button&gt;
+        &lt;button class=&quot;desktop-style-btn&quot; data-style=&quot;satellite&quot;&gt;衛星空照&lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 4. 電腦版右下角圖例 --&gt;
+      &lt;div class=&quot;desktop-bottom-right desktop-only&quot;&gt;
+        &lt;div class=&quot;desktop-legend-card&quot;&gt;
+          &lt;div class=&quot;legend-title&quot;&gt;
+            &lt;span&gt;陣營勢力圖例&lt;/span&gt;
+            &lt;span style=&quot;font-size:0.7rem; color:#80868b;&quot;&gt;2026&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;legend-row&quot;&gt;
+            &lt;div class=&quot;legend-color-box&quot; style=&quot;background:var(--shia-color); border:1px solid #b71c1c;&quot;&gt;&lt;/div&gt;
+            &lt;span&gt;🔴 什葉派陣營 (伊朗/伊拉克/葉門)&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;legend-row&quot;&gt;
+            &lt;div class=&quot;legend-color-box&quot; style=&quot;background:var(--sunni-color); border:1px solid #0d652d;&quot;&gt;&lt;/div&gt;
+            &lt;span&gt;🟢 遜尼派聯盟 (沙烏地/海灣/土耳其)&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;legend-row&quot;&gt;
+            &lt;div class=&quot;legend-color-box&quot; style=&quot;background:var(--us-color); border:1px solid #b06000;&quot;&gt;&lt;/div&gt;
+            &lt;span&gt;🟡 美軍基地與海軍打擊部隊&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;legend-row&quot;&gt;
+            &lt;div class=&quot;legend-color-box&quot; style=&quot;background:var(--choke-color); border:1px solid #1557b0;&quot;&gt;&lt;/div&gt;
+            &lt;span&gt;🔵 戰略咽喉 (荷莫茲) / 前線 (亞塞拜然)&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- ======================================================================
+           B. 手機版專屬介面元素 (Mobile Mode Elements - 專為手機重構)
+           ====================================================================== --&gt;
+      &lt;!-- 1. 手機端頂部懸浮控制艙 --&gt;
+      &lt;div class=&quot;mobile-top-container mobile-only&quot;&gt;
+        &lt;div class=&quot;mobile-search-pill&quot;&gt;
+          &lt;div class=&quot;mobile-brand-badge&quot;&gt;📍&lt;/div&gt;
+          &lt;div class=&quot;mobile-search-info&quot;&gt;
+            &lt;div class=&quot;mobile-search-main&quot;&gt;2026 中東戰情地圖&lt;/div&gt;
+            &lt;div class=&quot;mobile-search-sub&quot;&gt;Shia-Sunni Divide • 勢力範圍&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;select class=&quot;mobile-quick-jump-select&quot; id=&quot;mobileQuickSelect&quot;&gt;
+            &lt;option value=&quot;&quot; disabled selected&gt;快速跳轉...&lt;/option&gt;
+            &lt;option value=&quot;Iran&quot;&gt;🇮🇷 伊朗&lt;/option&gt;
+            &lt;option value=&quot;SaudiArabia&quot;&gt;🇸🇦 沙烏地&lt;/option&gt;
+            &lt;option value=&quot;StraitOfHormuz&quot;&gt;⚓ 荷莫茲&lt;/option&gt;
+            &lt;option value=&quot;Azerbaijan&quot;&gt;🇦🇿 亞塞拜然&lt;/option&gt;
+            &lt;option value=&quot;Bahrain&quot;&gt;🇧🇭 巴林第5艦隊&lt;/option&gt;
+            &lt;option value=&quot;Syria&quot;&gt;🇸🇾 敘利亞&lt;/option&gt;
+            &lt;option value=&quot;Yemen&quot;&gt;🇾🇪 葉門&lt;/option&gt;
+            &lt;option value=&quot;Turkey&quot;&gt;🇹🇷 土耳其&lt;/option&gt;
+            &lt;option value=&quot;Pakistan&quot;&gt;🇵🇰 巴基斯坦&lt;/option&gt;
+            &lt;option value=&quot;Egypt&quot;&gt;🇪🇬 埃及&lt;/option&gt;
+          &lt;/select&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 陣營篩選標籤 (橫向滑動) --&gt;
+        &lt;div class=&quot;mobile-chips-scroll&quot;&gt;
+          &lt;button class=&quot;mobile-chip-btn active&quot; data-filter=&quot;all&quot;&gt;全部&lt;/button&gt;
+          &lt;button class=&quot;mobile-chip-btn&quot; data-filter=&quot;shia&quot;&gt;🔴 什葉派&lt;/button&gt;
+          &lt;button class=&quot;mobile-chip-btn&quot; data-filter=&quot;sunni&quot;&gt;🟢 遜尼派&lt;/button&gt;
+          &lt;button class=&quot;mobile-chip-btn&quot; data-filter=&quot;us-military&quot;&gt;🟡 美軍&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 2. 手機版右側快捷工具浮動鈕 (FABs) --&gt;
+      &lt;div class=&quot;mobile-floating-tools mobile-only&quot;&gt;
+        &lt;button class=&quot;mobile-fab-btn&quot; id=&quot;mResetViewBtn&quot; title=&quot;全景重設&quot;&gt;🎯&lt;/button&gt;
+        &lt;button class=&quot;mobile-fab-btn&quot; id=&quot;mToggleLegendBtn&quot; title=&quot;圖例說明&quot;&gt;ℹ️&lt;/button&gt;
+        &lt;button class=&quot;mobile-fab-btn&quot; id=&quot;mToggleTileBtn&quot; title=&quot;切換衛星/街道&quot;&gt;🛰️&lt;/button&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 3. 手機版圖例說明彈出卡 --&gt;
+      &lt;div class=&quot;mobile-legend-modal mobile-only&quot; id=&quot;mobileLegendModal&quot;&gt;
+        &lt;div style=&quot;font-weight:800; margin-bottom:6px; display:flex; justify-content:space-between;&quot;&gt;
+          &lt;span&gt;陣營色彩圖例&lt;/span&gt;
+          &lt;span style=&quot;cursor:pointer;&quot; id=&quot;mCloseLegendBtn&quot;&gt;&amp;times;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;legend-row&quot;&gt;&lt;span style=&quot;color:var(--shia-color);&quot;&gt;🔴&lt;/span&gt; 什葉派 (伊朗/伊拉克/葉門)&lt;/div&gt;
+        &lt;div class=&quot;legend-row&quot;&gt;&lt;span style=&quot;color:var(--sunni-color);&quot;&gt;🟢&lt;/span&gt; 遜尼派 (沙烏地/土/巴/埃)&lt;/div&gt;
+        &lt;div class=&quot;legend-row&quot;&gt;&lt;span style=&quot;color:var(--us-color);&quot;&gt;🟡&lt;/span&gt; 美軍戰略部隊 (艦隊/基地)&lt;/div&gt;
+        &lt;div class=&quot;legend-row&quot;&gt;&lt;span style=&quot;color:var(--choke-color);&quot;&gt;🔵&lt;/span&gt; 封鎖咽喉 / 衝突前線&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 4. 手機版底部焦點地標快速滑動列 (Focus Dock) --&gt;
+      &lt;div class=&quot;mobile-focus-dock mobile-only&quot; id=&quot;mobileFocusDock&quot;&gt;
+        &lt;div class=&quot;dock-pill active&quot; data-id=&quot;Iran&quot;&gt;🇮🇷 伊朗核心&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;SaudiArabia&quot;&gt;🇸🇦 沙烏地&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;StraitOfHormuz&quot;&gt;⚓ 荷莫茲海峽&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;Bahrain&quot;&gt;🇧🇭 巴林基地&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;Azerbaijan&quot;&gt;🇦🇿 亞塞拜然&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;Syria&quot;&gt;🇸🇾 敘利亞&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;Yemen&quot;&gt;🇾🇪 葉門胡塞&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;Turkey&quot;&gt;🇹🇷 土耳其&lt;/div&gt;
+        &lt;div class=&quot;dock-pill&quot; data-id=&quot;Pakistan&quot;&gt;🇵🇰 巴基斯坦&lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;!-- 5. 手機版 Google Maps 3-Stage 底部上拉抽屜 (Bottom Sheet) --&gt;
+      &lt;section class=&quot;mobile-bottom-sheet mobile-only state-peek&quot; id=&quot;mobileBottomSheet&quot;&gt;
+        &lt;!-- 頂部拖曳把手條 --&gt;
+        &lt;div class=&quot;mobile-sheet-handle-bar&quot; id=&quot;mSheetHandleBar&quot;&gt;
+          &lt;div class=&quot;mobile-handle-pill&quot;&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- 抽屜緊湊標題列 (點擊切換展開/收合) --&gt;
+        &lt;div class=&quot;mobile-sheet-head&quot; id=&quot;mSheetHead&quot;&gt;
+          &lt;div class=&quot;mobile-head-left&quot;&gt;
+            &lt;span class=&quot;mobile-head-tag&quot; id=&quot;mSheetTag&quot;&gt;什葉派權力核心&lt;/span&gt;
+            &lt;div class=&quot;mobile-head-title&quot; id=&quot;mSheetTitle&quot;&gt;伊朗與什葉派權力核心&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;mobile-expand-indicator&quot; id=&quot;mExpandIcon&quot;&gt;▲&lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;!-- Peek 模式下露出之核心摘要簡評 --&gt;
+        &lt;div class=&quot;mobile-peek-snippet&quot; id=&quot;mPeekSnippet&quot;&gt;
+          由莫吉塔巴·哈米尼領導。因本土防空受創，戰略轉為保衛政權...
+        &lt;/div&gt;
+
+        &lt;!-- 可滾動詳細內容區 --&gt;
+        &lt;div class=&quot;mobile-sheet-scroll&quot;&gt;
+          &lt;!-- 戰略速覽指標 --&gt;
+          &lt;div class=&quot;mobile-meta-grid&quot;&gt;
+            &lt;div class=&quot;mobile-meta-box&quot;&gt;
+              &lt;div class=&quot;mobile-meta-label&quot;&gt;領導階層&lt;/div&gt;
+              &lt;div class=&quot;mobile-meta-val&quot; id=&quot;mSheetLeader&quot;&gt;莫吉塔巴·哈米尼&lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;mobile-meta-box&quot;&gt;
+              &lt;div class=&quot;mobile-meta-label&quot;&gt;戰略焦點&lt;/div&gt;
+              &lt;div class=&quot;mobile-meta-val&quot; id=&quot;mSheetFocus&quot;&gt;保衛政權存續&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+
+          &lt;!-- 核心必備注入文本 --&gt;
+          &lt;div class=&quot;mobile-highlight-box&quot; id=&quot;mSheetHighlight&quot;&gt;
+            由莫吉塔巴·哈米尼領導。因本土防空受創，戰略從區域霸權轉為保衛政權，並發動無差別攻擊。
+          &lt;/div&gt;
+
+          &lt;!-- 深度情報研析 --&gt;
+          &lt;div class=&quot;mobile-sec-header&quot;&gt;地緣戰略轉向研析&lt;/div&gt;
+          &lt;div class=&quot;mobile-analysis-p&quot; id=&quot;mSheetAnalysis&quot;&gt;
+            詳細分析加載中...
+          &lt;/div&gt;
+
+          &lt;!-- 2026 事件時間線 --&gt;
+          &lt;div class=&quot;mobile-sec-header&quot;&gt;2026 軍事行動時間線&lt;/div&gt;
+          &lt;ul class=&quot;mobile-timeline&quot; id=&quot;mSheetTimeline&quot;&gt;&lt;/ul&gt;
+        &lt;/div&gt;
+      &lt;/section&gt;
+
+    &lt;/div&gt;
+  &lt;/main&gt;
+
+  &lt;!-- ==========================================================================
+       JavaScript 核心控制邏輯
+       ========================================================================== --&gt;
+  &lt;script&gt;
+    /**
+     * 2026 中東地緣政治核心數據庫
+     * 完整注入指定的 ID、標題、核心論述與地緣脈絡
+     */
+    const geopoliticalDatabase = {
+      // 1. 伊朗 (指定必備項目)
+      Iran: {
+        id: &quot;Iran&quot;,
+        title: &quot;伊朗與什葉派權力核心&quot;,
+        faction: &quot;shia&quot;,
+        factionName: &quot;什葉派權力核心&quot;,
+        themeColor: &quot;#d93025&quot;,
+        coordinates: [32.4279, 53.6880],
+        zoom: 5,
+        leader: &quot;莫吉塔巴·哈米尼 (Mojtaba Khamenei)&quot;,
+        focus: &quot;保衛政權存續、無差別飽和打擊&quot;,
+        coreText: &quot;由莫吉塔巴·哈米尼領導。因本土防空受創，戰略從區域霸權轉為保衛政權，並發動無差別攻擊。&quot;,
+        extendedText: `
+          &lt;p&gt;&lt;strong&gt;戰略大轉折：&lt;/strong&gt;以色列與美國的高強度精準打擊重創了伊朗防空網與核設施，伴隨真主黨等代理人網絡瓦解，伊朗過去幾十年賴以擴張的「什葉派之弧」體系陷入癱瘓。&lt;/p&gt;
+          &lt;p&gt;新任領導人莫吉塔巴·哈米尼被迫將戰略優先級從「爭奪中東區域霸權」轉向「孤注一擲保衛政權存續」，採取無差別導彈與無人機飽和打擊，試圖拉高區域動盪成本逼退外部威脅。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年3月5日&quot;, desc: &quot;發動對亞塞拜然越境襲擊，破壞通往歐洲之能源管線。&quot; },
+          { date: &quot;2026年3月9日&quot;, desc: &quot;對巴林境內美軍第5艦隊基地發動飽和飛彈襲擊，並試圖封鎖荷莫茲海峽。&quot; }
+        ]
+      },
+
+      // 2. 沙烏地阿拉伯 (指定必備項目)
+      SaudiArabia: {
+        id: &quot;SaudiArabia&quot;,
+        title: &quot;沙烏地阿拉伯與遜尼派聯盟&quot;,
+        faction: &quot;sunni&quot;,
+        factionName: &quot;遜尼派聯盟&quot;,
+        themeColor: &quot;#188038&quot;,
+        coordinates: [24.7136, 46.6753],
+        zoom: 5,
+        leader: &quot;王儲 穆罕默德·本·沙爾曼 (MBS)&quot;,
+        focus: &quot;推動《麥加協議》、尋求核保護傘&quot;,
+        coreText: &quot;對美國保護傘失去信心，戰略轉向與擁核的巴基斯坦結盟，並推動伊斯蘭集體防衛體系。&quot;,
+        extendedText: `
+          &lt;p&gt;&lt;strong&gt;美國保護傘失信：&lt;/strong&gt;當煉油基礎設施接連遭遇突襲時，海灣盟國深刻感受到美軍攔截彈藥補給遲緩，且易受以美對伊戰略牽連，因此決定尋求多極化國防架構。&lt;/p&gt;
+          &lt;p&gt;&lt;strong&gt;《麥加協議》防衛軸心：&lt;/strong&gt;沙烏地憑藉雄厚主權基金，結盟擁有北約強大常規陸空軍力的土耳其，並引入巴基斯坦成熟的戰略核遏阻力量，構築起全新的伊斯蘭集體防禦體系。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2025年&quot;, desc: &quot;愛國者反導彈藥消耗告急，海灣各國啟動多方戰略自主研判。&quot; },
+          { date: &quot;2026年&quot;, desc: &quot;沙烏地正式倡議簽訂《麥加協議》，整合土耳其常規軍力與巴基斯坦戰略核保證。&quot; }
+        ]
+      },
+
+      // 3. 荷莫茲海峽 (指定必備項目)
+      StraitOfHormuz: {
+        id: &quot;StraitOfHormuz&quot;,
+        title: &quot;咽喉點與海上封鎖 (荷莫茲海峽)&quot;,
+        faction: &quot;choke&quot;,
+        factionName: &quot;能源咽喉與封鎖&quot;,
+        themeColor: &quot;#1a73e8&quot;,
+        coordinates: [26.5667, 56.2500],
+        zoom: 7,
+        leader: &quot;伊朗革命衛隊海軍 (IRGCN)&quot;,
+        focus: &quot;航道水雷布設、岸置飛彈威懾&quot;,
+        coreText: &quot;伊朗為反擊而試圖封鎖荷莫茲海峽，並對巴林的美軍基地與民用設施發動攻擊（2026年3月9日）。&quot;,
+        extendedText: `
+          &lt;p&gt;&lt;strong&gt;全球能源血管緊縮：&lt;/strong&gt;作為承載全球兩成以上原油貿易的最窄咽喉通道，伊朗藉由水雷與岸基反艦飛彈對商船實施高壓封鎖，藉此引爆國際原油惡性通膨危機來制約外部攻勢。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年3月9日&quot;, desc: &quot;伊朗革命衛隊海軍宣布進入交戰管制，向周邊航運發動無差別實彈拒止。&quot; }
+        ]
+      },
+
+      // 4. 亞塞拜然
+      Azerbaijan: {
+        id: &quot;Azerbaijan&quot;,
+        title: &quot;亞塞拜然 (3/5 越境襲擊前線)&quot;,
+        faction: &quot;choke&quot;,
+        factionName: &quot;衝突前線 / 能源管線&quot;,
+        themeColor: &quot;#d93025&quot;,
+        coordinates: [40.4093, 49.8671],
+        zoom: 6.5,
+        leader: &quot;伊利哈姆·阿利耶夫總統&quot;,
+        focus: &quot;確保裏海油氣管道與邊界安全&quot;,
+        coreText: &quot;2026年3月5日遭伊朗越境打擊，意圖威脅通往以色列與歐洲的關鍵能源管線走廊。&quot;,
+        extendedText: `
+          &lt;p&gt;亞塞拜然作為歐洲擺脫俄羅斯天然氣與以色列能源供應的要道，成為伊朗試圖轉移南部壓力並震懾北翼的第一個目標。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年3月5日&quot;, desc: &quot;南部邊境能源輸油站遭伊朗無人機突襲，土耳其迅速進駐防空雷達協防。&quot; }
+        ]
+      },
+
+      // 5. 巴林第5艦隊基地
+      Bahrain: {
+        id: &quot;Bahrain&quot;,
+        title: &quot;巴林美軍第5艦隊基地 (3/9 飽和襲擊)&quot;,
+        faction: &quot;us-military&quot;,
+        factionName: &quot;美軍核心前沿母港&quot;,
+        themeColor: &quot;#f29900&quot;,
+        coordinates: [26.2285, 50.5860],
+        zoom: 7.5,
+        leader: &quot;美軍中央司令部海軍司令部&quot;,
+        focus: &quot;防空攔截、維持波斯灣海權&quot;,
+        coreText: &quot;2026年3月9日遭伊朗發動大規模飽和飛彈與無人機突襲，基地與周邊民用基礎設施受創。&quot;,
+        extendedText: `
+          &lt;p&gt;巴林朱法爾海軍基地是美軍在中東的核心樞紐。伊朗在2026年3月9日的飽和打擊不僅針對軍事泊位，更波及民用港埠，引發海灣全面防空升級。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年3月9日&quot;, desc: &quot;數十枚彈道飛彈與無人機展開多批次突擊，造成港區嚴重受損。&quot; }
+        ]
+      },
+
+      // 6. 東地中海美軍
+      USMed: {
+        id: &quot;USMed&quot;,
+        title: &quot;美軍東地中海航艦打擊群&quot;,
+        faction: &quot;us-military&quot;,
+        factionName: &quot;美軍戰略部署&quot;,
+        themeColor: &quot;#f29900&quot;,
+        coordinates: [34.0, 31.0],
+        zoom: 5.5,
+        leader: &quot;美軍第6艦隊航艦打擊編隊&quot;,
+        focus: &quot;戰區防空盾、遠程巡弋飛彈投射&quot;,
+        coreText: &quot;部署於地中海東側，提供遠程精準打擊、戰區飛彈防禦並牽制北方側翼。&quot;,
+        extendedText: `
+          &lt;p&gt;航艦打擊群透過艦載神盾系統與防空導彈，為黎凡特與以色列周邊構築空防屏障，同時負責警戒敘利亞空域動向。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年3月&quot;, desc: &quot;完成與盟軍聯合戰鬥巡邏佈署，進入即時反導戒備狀態。&quot; }
+        ]
+      },
+
+      // 7. 印度洋美軍支援梯隊
+      USIndian: {
+        id: &quot;USIndian&quot;,
+        title: &quot;美軍印度洋支援梯隊&quot;,
+        faction: &quot;us-military&quot;,
+        factionName: &quot;美軍戰略部署&quot;,
+        themeColor: &quot;#f29900&quot;,
+        coordinates: [21.5, 61.5],
+        zoom: 5.5,
+        leader: &quot;美軍印太/中央司令部聯合作戰編隊&quot;,
+        focus: &quot;阿曼灣外線封鎖、遠程戰略威懾&quot;,
+        coreText: &quot;控制荷莫茲海峽外圍航道，負責外線補給線安全與遠程戰略威懾。&quot;,
+        extendedText: `
+          &lt;p&gt;在阿曼灣與阿拉伯海集結的遠洋特遣部隊，是荷莫茲海峽一旦遭封鎖時，確保外圍航線安全與實施深遠反擊的後盾。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年3月&quot;, desc: &quot;提升至外線一級戰備，執行海空警戒巡弋。&quot; }
+        ]
+      },
+
+      // 8. 敘利亞新局
+      Syria: {
+        id: &quot;Syria&quot;,
+        title: &quot;敘利亞政局突變與土耳其勢力圈&quot;,
+        faction: &quot;sunni&quot;,
+        factionName: &quot;遜尼派過渡政權&quot;,
+        themeColor: &quot;#188038&quot;,
+        coordinates: [34.8021, 38.9968],
+        zoom: 6,
+        leader: &quot;親土耳其過渡政府&quot;,
+        focus: &quot;接納2萬土軍進駐、清除親伊走廊&quot;,
+        coreText: &quot;2024年底統治54年的阿薩德政權垮台，土耳其駐軍2萬人填補真空，截斷伊朗陸上走廊。&quot;,
+        extendedText: `
+          &lt;p&gt;阿薩德政權瓦解徹底斬斷了伊朗直通地中海的「什葉派新月陸上補給線」。土耳其的全面進駐使敘利亞倒向遜尼派陣營。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2024年12月&quot;, desc: &quot;阿薩德家族政權垮台，土軍進駐並部署防空陣地。&quot; }
+        ]
+      },
+
+      // 9. 葉門胡塞武裝
+      Yemen: {
+        id: &quot;Yemen&quot;,
+        title: &quot;葉門胡塞武裝 (曼德海峽咽喉)&quot;,
+        faction: &quot;shia&quot;,
+        factionName: &quot;什葉派代理勢力&quot;,
+        themeColor: &quot;#d93025&quot;,
+        coordinates: [15.3694, 47.0],
+        zoom: 6,
+        leader: &quot;胡塞武裝軍事委員會&quot;,
+        focus: &quot;曼德海峽反艦襲擊、牽制紅海航道&quot;,
+        coreText: &quot;伊朗在紅海南端的代理人要塞，以不對稱飛彈與自殺艇威脅全球航運。&quot;,
+        extendedText: `
+          &lt;p&gt;胡塞武裝利用紅海咽喉地形，與北面的波斯灣形成南北夾擊，持續向國際航線施壓以分散美以聯軍的戰力重心。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年&quot;, desc: &quot;持續實施紅海曼德海峽商船與護航艦打擊行動。&quot; }
+        ]
+      },
+
+      // 10. 伊拉克
+      Iraq: {
+        id: &quot;Iraq&quot;,
+        title: &quot;伊拉克 (什葉多數但深陷分裂)&quot;,
+        faction: &quot;shia&quot;,
+        factionName: &quot;什葉多數 / 派系分歧&quot;,
+        themeColor: &quot;#d93025&quot;,
+        coordinates: [33.3152, 44.3661],
+        zoom: 6,
+        leader: &quot;巴格達中央政府與什葉派民兵&quot;,
+        focus: &quot;平衡美伊衝突、內部教派拉鋸&quot;,
+        coreText: &quot;什葉派佔人口多數，但因親美派與親伊朗什葉民兵拉鋸，深陷內部派系分裂。&quot;,
+        extendedText: `
+          &lt;p&gt;伊拉克境內同時駐有美軍顧問與受伊朗革命衛隊指揮的人民動員軍（PMF），成為隨時可能爆發內戰衝突的火藥庫。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年&quot;, desc: &quot;境內軍事基地多次面臨無人機突襲，政府極力避免捲入戰火。&quot; }
+        ]
+      },
+
+      // 11. 土耳其
+      Turkey: {
+        id: &quot;Turkey&quot;,
+        title: &quot;土耳其 (《麥加協議》常規軍力支柱)&quot;,
+        faction: &quot;sunni&quot;,
+        factionName: &quot;遜尼派集體防衛盟友&quot;,
+        themeColor: &quot;#188038&quot;,
+        coordinates: [39.0, 35.0],
+        zoom: 5.5,
+        leader: &quot;雷傑普·塔伊普·艾爾多安 (Erdoğan)&quot;,
+        focus: &quot;駐軍敘利亞2萬人、建構伊斯蘭集體防衛體系&quot;,
+        coreText: &quot;政府右傾支持政教合一，填補敘利亞真空，透過《麥加協議》將影響力投射至波斯灣與紅海。&quot;,
+        extendedText: `
+          &lt;p&gt;透過與沙烏地結盟，土耳其不僅獲得了急需的海灣主權資金，更在戰略上構築起足以與外部大國平起平坐的伊斯蘭集體防衛陣營。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年&quot;, desc: &quot;與沙烏地簽署深度國防互助協議，共同牽制美伊衝突外溢。&quot; }
+        ]
+      },
+
+      // 12. 巴基斯坦
+      Pakistan: {
+        id: &quot;Pakistan&quot;,
+        title: &quot;巴基斯坦 (《麥加協議》戰略核屏障)&quot;,
+        faction: &quot;sunni&quot;,
+        factionName: &quot;遜尼派核盟友&quot;,
+        themeColor: &quot;#188038&quot;,
+        coordinates: [30.0, 69.0],
+        zoom: 5.5,
+        leader: &quot;巴基斯坦最高軍事指揮部&quot;,
+        focus: &quot;提供戰略核威懾承諾、平衡伊朗東界&quot;,
+        coreText: &quot;受《麥加協議》拉攏，以成熟戰略核武為遜尼派集體防衛體系提供終極核威懾屏障。&quot;,
+        extendedText: `
+          &lt;p&gt;在沙烏地對西方保護傘失去信心後，巴基斯坦成為遜尼派集體防禦體系中無可取代的終極戰略核武支柱。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年&quot;, desc: &quot;正式與沙烏地建立戰略安保熱線，派遣高階軍事顧問團常駐海灣。&quot; }
+        ]
+      },
+
+      // 13. 埃及
+      Egypt: {
+        id: &quot;Egypt&quot;,
+        title: &quot;埃及 (謹慎中立與守護蘇伊士)&quot;,
+        faction: &quot;sunni&quot;,
+        factionName: &quot;遜尼派中立國&quot;,
+        themeColor: &quot;#188038&quot;,
+        coordinates: [26.5, 30.0],
+        zoom: 5.5,
+        leader: &quot;阿卜杜勒-法塔赫·塞西總統&quot;,
+        focus: &quot;確保蘇伊士運河通航、嚴守西奈邊界&quot;,
+        coreText: &quot;保持高度謹慎中立，全力防止紅海航道中斷對蘇伊士運河外匯的衝擊。&quot;,
+        extendedText: `
+          &lt;p&gt;埃及面臨嚴重的外匯危機，其首要戰略為確保蘇伊士運河航運安全，並防止區域難民潮與極端主義波及西奈半島。&lt;/p&gt;
+        `,
+        timeline: [
+          { date: &quot;2026年&quot;, desc: &quot;強化紅海北端防禦巡邏，在多方博弈中維持謹慎中立斡旋。&quot; }
+        ]
+      }
+    };
+
+    // ==========================================================================
+    // 陣營勢力範圍多邊形 (高精度無縫地理邊界)
+    // ==========================================================================
+    const territoryPolygons = [
+      {
+        id: &quot;Iran&quot;,
+        name: &quot;伊朗本土 (什葉派核心)&quot;,
+        faction: &quot;shia&quot;,
+        color: &quot;#d93025&quot;,
+        coords: [
+          [38.4, 44.3], [39.0, 44.5], [39.7, 44.8], [39.0, 47.0], [38.4, 48.6], 
+          [38.4, 48.8], [37.5, 49.3], [37.0, 50.1], [36.9, 51.5], [36.8, 53.5], 
+          [36.8, 54.0], [37.3, 54.0], [37.8, 54.5], [37.7, 56.5], [38.2, 57.5], 
+          [37.8, 58.8], [37.4, 59.5], [36.5, 61.2], [35.5, 61.1], [34.0, 60.5], 
+          [32.0, 60.9], [30.5, 61.8], [29.8, 61.0], [28.0, 62.0], [26.5, 62.0], 
+          [25.1, 61.6], [25.3, 60.6], [25.4, 59.0], [25.6, 57.8], [27.0, 56.5], 
+          [27.2, 56.3], [26.7, 55.0], [26.8, 54.0], [27.4, 52.6], [28.2, 51.5], 
+          [29.6, 50.3], [30.0, 49.1], [30.4, 48.6], [31.0, 47.7], [32.0, 47.3], 
+          [33.0, 46.1], [34.0, 45.4], [35.0, 45.8], [36.0, 45.2], [37.0, 44.8], 
+          [38.0, 44.3]
+        ]
+      },
+      {
+        id: &quot;Iraq&quot;,
+        name: &quot;伊拉克 (什葉派多數/分歧區)&quot;,
+        faction: &quot;shia&quot;,
+        color: &quot;#d93025&quot;,
+        coords: [
+          [37.4, 42.8], [37.3, 43.5], [37.1, 44.5], [37.0, 44.8], [36.0, 45.2], 
+          [35.0, 45.8], [34.0, 45.4], [33.0, 46.1], [32.0, 47.3], [31.0, 47.7], 
+          [30.4, 48.6], [29.9, 48.5], [29.1, 47.5], [29.1, 46.5], [30.5, 43.5], 
+          [31.5, 41.5], [32.2, 39.2], [32.5, 39.0], [33.4, 38.8], [34.5, 41.0], 
+          [36.0, 41.8], [36.9, 42.4], [37.4, 42.8]
+        ]
+      },
+      {
+        id: &quot;Yemen&quot;,
+        name: &quot;葉門 (胡塞武裝勢力範圍)&quot;,
+        faction: &quot;shia&quot;,
+        color: &quot;#d93025&quot;,
+        coords: [
+          [16.4, 42.8], [17.0, 42.8], [17.5, 43.5], [16.5, 44.5], [17.3, 47.0], 
+          [17.3, 52.0], [16.6, 53.1], [15.2, 52.0], [14.5, 49.5], [14.0, 48.0], 
+          [13.2, 45.3], [12.7, 44.5], [12.6, 43.4], [13.4, 43.2], [14.5, 42.9], 
+          [15.5, 42.6], [16.4, 42.8]
+        ]
+      },
+      {
+        id: &quot;SaudiArabia&quot;,
+        name: &quot;沙烏地阿拉伯 (遜尼派核心)&quot;,
+        faction: &quot;sunni&quot;,
+        color: &quot;#188038&quot;,
+        coords: [
+          [31.5, 37.1], [32.2, 39.2], [31.5, 41.5], [30.5, 43.5], [29.1, 46.5], 
+          [28.5, 47.7], [28.5, 48.5], [27.5, 49.2], [26.5, 50.1], [25.5, 50.3], 
+          [24.5, 50.8], [24.0, 51.6], [24.0, 53.0], [23.0, 55.2], [22.5, 55.7], 
+          [20.0, 55.0], [19.0, 52.0], [17.3, 52.0], [17.3, 47.0], [16.5, 44.5], 
+          [17.5, 43.5], [17.0, 42.8], [16.4, 42.8], [17.5, 42.2], [18.5, 41.5], 
+          [20.0, 40.2], [21.5, 39.2], [23.5, 38.5], [25.0, 37.3], [27.0, 35.8], 
+          [28.0, 35.0], [29.0, 35.0], [29.5, 35.0], [29.3, 34.9], [29.5, 35.8], 
+          [30.0, 36.5], [31.5, 37.1]
+        ]
+      },
+      {
+        id: &quot;Syria&quot;,
+        name: &quot;敘利亞 (親土耳其過渡勢力圈)&quot;,
+        faction: &quot;sunni&quot;,
+        color: &quot;#188038&quot;,
+        coords: [
+          [36.8, 35.9], [36.7, 36.6], [36.8, 38.0], [37.0, 39.5], [37.0, 41.5], 
+          [37.4, 42.8], [36.9, 42.4], [36.0, 41.8], [34.5, 41.0], [33.4, 38.8], 
+          [32.5, 39.0], [32.3, 37.5], [32.5, 36.0], [32.8, 35.8], [33.3, 35.8], 
+          [33.8, 36.2], [34.5, 36.3], [34.6, 35.9], [34.9, 35.9], [35.9, 35.8], 
+          [36.8, 35.9]
+        ]
+      },
+      {
+        id: &quot;Egypt&quot;,
+        name: &quot;埃及 (謹慎中立與蘇伊士)&quot;,
+        faction: &quot;sunni&quot;,
+        color: &quot;#188038&quot;,
+        coords: [
+          [31.3, 34.2], [31.0, 33.0], [31.5, 31.5], [31.5, 30.0], [31.5, 25.0], 
+          [22.0, 25.0], [22.0, 36.8], [24.0, 35.5], [26.0, 34.3], [27.8, 33.8], 
+          [28.0, 34.5], [29.5, 34.9], [31.3, 34.2]
+        ]
+      },
+      {
+        id: &quot;Turkey&quot;,
+        name: &quot;土耳其 (麥加協議盟友)&quot;,
+        faction: &quot;sunni&quot;,
+        color: &quot;#188038&quot;,
+        coords: [
+          [42.0, 26.0], [42.0, 41.5], [41.0, 43.5], [39.5, 44.5], [37.4, 42.8], 
+          [37.0, 41.5], [37.0, 39.5], [36.8, 38.0], [36.7, 36.6], [36.8, 35.9], 
+          [36.0, 33.5], [36.5, 30.0], [38.5, 26.5], [40.5, 26.0], [42.0, 26.0]
+        ]
+      },
+      {
+        id: &quot;Pakistan&quot;,
+        name: &quot;巴基斯坦 (核威懾夥伴)&quot;,
+        faction: &quot;sunni&quot;,
+        color: &quot;#188038&quot;,
+        coords: [
+          [36.5, 74.5], [35.0, 75.0], [31.5, 74.5], [28.0, 70.0], [24.0, 68.0], 
+          [25.0, 62.0], [25.1, 61.6], [26.5, 62.0], [28.0, 62.0], [29.8, 61.0], 
+          [30.5, 61.8], [32.0, 60.9], [31.5, 66.5], [34.0, 70.0], [36.5, 74.5]
+        ]
+      },
+      {
+        id: &quot;GulfStates&quot;,
+        name: &quot;海灣阿拉伯國家聯盟 (阿聯酋/阿曼/卡達/科威特)&quot;,
+        faction: &quot;sunni&quot;,
+        color: &quot;#188038&quot;,
+        coords: [
+          [26.2, 56.4], [25.5, 56.3], [24.5, 56.8], [23.5, 59.0], [22.5, 59.8], 
+          [20.5, 58.8], [19.0, 57.5], [17.0, 55.0], [16.6, 53.1], [17.3, 52.0], 
+          [19.0, 52.0], [20.0, 55.0], [22.5, 55.7], [24.0, 51.6], [26.0, 50.5], 
+          [28.5, 48.5], [29.9, 48.5], [28.5, 48.5], [26.2, 56.4]
+        ]
+      },
+      {
+        id: &quot;Azerbaijan&quot;,
+        name: &quot;亞塞拜然 (3/5 越境攻擊衝突區)&quot;,
+        faction: &quot;choke&quot;,
+        color: &quot;#1a73e8&quot;,
+        coords: [
+          [41.9, 46.5], [41.6, 48.5], [40.6, 50.3], [39.3, 49.5], [38.4, 48.8], 
+          [39.0, 47.0], [39.7, 44.8], [41.0, 45.2], [41.9, 46.5]
+        ]
+      },
+      {
+        id: &quot;StraitOfHormuz&quot;,
+        name: &quot;荷莫茲海峽海上封鎖區 (Chokepoint)&quot;,
+        faction: &quot;choke&quot;,
+        color: &quot;#1a73e8&quot;,
+        coords: [
+          [27.3, 55.8], [27.3, 56.8], [26.0, 56.8], [26.0, 55.8]
+        ]
+      }
+    ];
+
+    // ==========================================================================
+    // 地圖核心初始化 (100% 免 API Key 圖資)
+    // ==========================================================================
+    const map = L.map(&quot;map&quot;, {
+      center: [28.0, 48.0],
+      zoom: 5,
+      minZoom: 3,
+      maxZoom: 14,
+      zoomControl: false
+    });
+
+    const tileLayers = {
+      streets: L.tileLayer(&quot;https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}&quot;, {
+        attribution: &#x27;Tiles &amp;copy; Esri &amp;mdash; DeLorme, NAVTEQ, USGS&#x27;,
+        maxZoom: 18
+      }),
+      osm: L.tileLayer(&quot;https://tile.openstreetmap.org/{z}/{x}/{y}.png&quot;, {
+        attribution: &#x27;&amp;copy; OpenStreetMap contributors&#x27;,
+        maxZoom: 19
+      }),
+      satellite: L.tileLayer(&quot;https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}&quot;, {
+        attribution: &#x27;Tiles &amp;copy; Esri &amp;mdash; USDA, USGS, GeoEye&#x27;,
+        maxZoom: 18
+      })
+    };
+    tileLayers.streets.addTo(map);
+
+    // ==========================================================================
+    // 自訂 Google Maps 質感 Pin 圖示
+    // ==========================================================================
+    function createPinIcon(color, symbol = &quot;●&quot;) {
+      return L.divIcon({
+        className: &quot;custom-gm-pin&quot;,
+        html: `
+          &lt;div class=&quot;gm-pin-container&quot;&gt;
+            &lt;svg class=&quot;gm-pin-svg&quot; width=&quot;32&quot; height=&quot;42&quot; viewBox=&quot;0 0 32 42&quot;&gt;
+              &lt;path d=&quot;M16 0C7.16 0 0 7.16 0 16c0 11.2 16 26 16 26s16-14.8 16-26c0-8.84-7.16-16-16-16z&quot; fill=&quot;${color}&quot; stroke=&quot;#ffffff&quot; stroke-width=&quot;2&quot;/&gt;
+              &lt;circle cx=&quot;16&quot; cy=&quot;15&quot; r=&quot;7.5&quot; fill=&quot;#ffffff&quot;/&gt;
+              &lt;text x=&quot;16&quot; y=&quot;19&quot; font-size=&quot;11&quot; font-weight=&quot;bold&quot; fill=&quot;${color}&quot; text-anchor=&quot;middle&quot;&gt;${symbol}&lt;/text&gt;
+            &lt;/svg&gt;
+            &lt;div class=&quot;gm-pin-radar&quot; style=&quot;border: 2px solid ${color};&quot;&gt;&lt;/div&gt;
+          &lt;/div&gt;
+        `,
+        iconSize: [32, 42],
+        iconAnchor: [16, 42],
+        popupAnchor: [0, -42]
+      });
+    }
+
+    // 渲染多邊形顏色區塊
+    const renderedPolygons = {};
+    territoryPolygons.forEach(territory =&gt; {
+      const poly = L.polygon(territory.coords, {
+        color: territory.color,
+        weight: 2,
+        opacity: 0.85,
+        fillColor: territory.color,
+        fillOpacity: 0.22
+      }).addTo(map);
+
+      poly.on(&quot;mouseover&quot;, () =&gt; poly.setStyle({ weight: 3.5, fillOpacity: 0.38 }));
+      poly.on(&quot;mouseout&quot;, () =&gt; poly.setStyle({ weight: 2, fillOpacity: 0.22 }));
+      poly.on(&quot;click&quot;, () =&gt; {
+        if (geopoliticalDatabase[territory.id]) {
+          showLocationDetail(territory.id, true);
+        }
+      });
+      poly.bindTooltip(`&lt;strong style=&quot;color:${territory.color};&quot;&gt;${territory.name}&lt;/strong&gt;`, { sticky: true });
+
+      renderedPolygons[territory.id] = { layer: poly, faction: territory.faction, baseColor: territory.color };
+    });
+
+    // 渲染地標 Marker (Pins)
+    const renderedMarkers = {};
+    Object.values(geopoliticalDatabase).forEach(item =&gt; {
+      let symbol = &quot;●&quot;;
+      if (item.id === &quot;Iran&quot;) symbol = &quot;🇮🇷&quot;;
+      else if (item.id === &quot;SaudiArabia&quot;) symbol = &quot;🇸🇦&quot;;
+      else if (item.id === &quot;StraitOfHormuz&quot;) symbol = &quot;⚓&quot;;
+      else if (item.id.includes(&quot;US&quot;)) symbol = &quot;★&quot;;
+      else if (item.id === &quot;Azerbaijan&quot;) symbol = &quot;🎯&quot;;
+      else if (item.id === &quot;Turkey&quot;) symbol = &quot;🇹🇷&quot;;
+      else if (item.id === &quot;Pakistan&quot;) symbol = &quot;🇵🇰&quot;;
+      else if (item.id === &quot;Egypt&quot;) symbol = &quot;🇪🇬&quot;;
+      else if (item.id === &quot;Syria&quot;) symbol = &quot;🇸🇾&quot;;
+      else if (item.id === &quot;Yemen&quot;) symbol = &quot;🇾🇪&quot;;
+      else if (item.id === &quot;Iraq&quot;) symbol = &quot;🇮🇶&quot;;
+
+      const icon = createPinIcon(item.themeColor, symbol);
+      const marker = L.marker(item.coordinates, { icon: icon }).addTo(map);
+
+      marker.bindTooltip(`&lt;strong&gt;${item.title}&lt;/strong&gt;`, { offset: [0, -38], direction: &quot;top&quot; });
+      marker.on(&quot;click&quot;, () =&gt; showLocationDetail(item.id, true));
+
+      renderedMarkers[item.id] = { marker: marker, faction: item.faction };
+    });
+
+    // ==========================================================================
+    // 電腦版 vs 手機版介面切換控制器 (Mode Switcher)
+    // ==========================================================================
+    let currentViewMode = &quot;desktop&quot;;
+    let isWithFrame = true; // 桌機手機版外框狀態
+
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      const body = document.body;
+      const btnDesk = document.getElementById(&quot;btnModeDesktop&quot;);
+      const btnMob = document.getElementById(&quot;btnModeMobile&quot;);
+
+      if (mode === &quot;desktop&quot;) {
+        body.classList.remove(&quot;mode-mobile&quot;, &quot;with-frame&quot;, &quot;no-frame&quot;);
+        body.classList.add(&quot;mode-desktop&quot;);
+        btnDesk.classList.add(&quot;active&quot;);
+        btnMob.classList.remove(&quot;active&quot;);
+      } else {
+        body.classList.remove(&quot;mode-desktop&quot;);
+        body.classList.add(&quot;mode-mobile&quot;);
+        if (isWithFrame) body.classList.add(&quot;with-frame&quot;);
+        else body.classList.add(&quot;no-frame&quot;);
+        btnMob.classList.add(&quot;active&quot;);
+        btnDesk.classList.remove(&quot;active&quot;);
+      }
+
+      // 地圖重整尺寸與視角自適應
+      setTimeout(() =&gt; {
+        map.invalidateSize();
+        if (mode === &quot;mobile&quot;) {
+          // 移動到適合手機觀看之視角 (微偏南以留出頂部空間)
+          map.flyTo([25.0, 48.0], 4.2, { duration: 0.8 });
+        } else {
+          map.flyTo([28.0, 48.0], 5, { duration: 0.8 });
+        }
+      }, 250);
+    }
+
+    function toggleMobileFrame() {
+      if (currentViewMode !== &quot;mobile&quot;) return;
+      const body = document.body;
+      isWithFrame = !isWithFrame;
+      if (isWithFrame) {
+        body.classList.remove(&quot;no-frame&quot;);
+        body.classList.add(&quot;with-frame&quot;);
+      } else {
+        body.classList.remove(&quot;with-frame&quot;);
+        body.classList.add(&quot;no-frame&quot;);
+      }
+      setTimeout(() =&gt; map.invalidateSize(), 250);
+    }
+
+    // ==========================================================================
+    // 詳情顯示邏輯 (同步更新電腦版側邊欄 &amp; 手機版底部抽屜)
+    // ==========================================================================
+    let activeLocationId = &quot;Iran&quot;;
+    const desktopSideSheet = document.getElementById(&quot;desktopSideSheet&quot;);
+    const mobileBottomSheet = document.getElementById(&quot;mobileBottomSheet&quot;);
+
+    function showLocationDetail(id, shouldFly = true) {
+      const data = geopoliticalDatabase[id];
+      if (!data) return;
+      activeLocationId = id;
+
+      // 1. 更新電腦版側邊欄
+      document.getElementById(&quot;desktopSheetTitle&quot;).textContent = data.title;
+      document.getElementById(&quot;desktopSheetLeader&quot;).textContent = data.leader || &quot;未特別註記&quot;;
+      document.getElementById(&quot;desktopSheetFocus&quot;).textContent = data.focus || &quot;地緣軍事防衛&quot;;
+      document.getElementById(&quot;desktopSheetHighlight&quot;).innerHTML = data.coreText;
+      document.getElementById(&quot;desktopSheetAnalysis&quot;).innerHTML = data.extendedText;
+      document.getElementById(&quot;desktopSheetTag&quot;).textContent = data.factionName;
+      document.getElementById(&quot;desktopSheetTag&quot;).style.backgroundColor = data.themeColor;
+      document.getElementById(&quot;desktopSheetHead&quot;).style.background = `linear-gradient(135deg, ${data.themeColor}dd, #0f172a)`;
+
+      const dTimeline = document.getElementById(&quot;desktopSheetTimeline&quot;);
+      dTimeline.innerHTML = &quot;&quot;;
+      if (data.timeline) {
+        data.timeline.forEach(item =&gt; {
+          const li = document.createElement(&quot;li&quot;);
+          li.style.marginBottom = &quot;12px&quot;;
+          li.innerHTML = `&lt;strong style=&quot;color:#174ea6;&quot;&gt;${item.date}&lt;/strong&gt;&lt;div style=&quot;color:#5f6368; font-size:0.85rem;&quot;&gt;${item.desc}&lt;/div&gt;`;
+          dTimeline.appendChild(li);
+        });
+      }
+      desktopSideSheet.classList.add(&quot;open&quot;);
+
+      // 2. 更新手機版底部抽屜
+      document.getElementById(&quot;mSheetTitle&quot;).textContent = data.title;
+      document.getElementById(&quot;mSheetTag&quot;).textContent = data.factionName;
+      document.getElementById(&quot;mSheetTag&quot;).style.backgroundColor = data.themeColor;
+      document.getElementById(&quot;mSheetHead&quot;).style.background = `linear-gradient(135deg, ${data.themeColor}dd, #0f172a)`;
+      document.getElementById(&quot;mPeekSnippet&quot;).textContent = data.coreText;
+      document.getElementById(&quot;mSheetLeader&quot;).textContent = data.leader || &quot;未特別註記&quot;;
+      document.getElementById(&quot;mSheetFocus&quot;).textContent = data.focus || &quot;地緣軍事防衛&quot;;
+      document.getElementById(&quot;mSheetHighlight&quot;).innerHTML = data.coreText;
+      document.getElementById(&quot;mSheetAnalysis&quot;).innerHTML = data.extendedText;
+
+      const mTimeline = document.getElementById(&quot;mSheetTimeline&quot;);
+      mTimeline.innerHTML = &quot;&quot;;
+      if (data.timeline) {
+        data.timeline.forEach(item =&gt; {
+          const li = document.createElement(&quot;li&quot;);
+          li.className = &quot;mobile-timeline-item&quot;;
+          li.innerHTML = `&lt;div class=&quot;mobile-tl-date&quot;&gt;${item.date}&lt;/div&gt;&lt;div class=&quot;mobile-tl-desc&quot;&gt;${item.desc}&lt;/div&gt;`;
+          mTimeline.appendChild(li);
+        });
+      }
+
+      // 手機端焦點 Dock 狀態同步
+      document.querySelectorAll(&quot;.dock-pill&quot;).forEach(pill =&gt; {
+        pill.classList.toggle(&quot;active&quot;, pill.getAttribute(&quot;data-id&quot;) === id);
+      });
+
+      // 視角自動飛行 (手機端具備向上偏置補償，不被抽屜擋住)
+      if (shouldFly &amp;&amp; data.coordinates) {
+        const isMobileMode = currentViewMode === &quot;mobile&quot;;
+        const targetLat = isMobileMode ? data.coordinates[0] - 2.6 : data.coordinates[0];
+        const targetZoom = isMobileMode ? Math.max(data.zoom - 0.4, 4.4) : data.zoom;
+        map.flyTo([targetLat, data.coordinates[1]], targetZoom, { duration: 1.0 });
+      }
+    }
+
+    // 關閉電腦版側邊欄
+    document.getElementById(&quot;desktopCloseBtn&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      desktopSideSheet.classList.remove(&quot;open&quot;);
+    });
+
+    // ==========================================================================
+    // 手機版底部抽屜交互邏輯 (3-Stage Snap &amp; Touch Swipe)
+    // ==========================================================================
+    let sheetState = &quot;peek&quot;; // peek, half, full
+
+    function setMobileSheetState(newState) {
+      sheetState = newState;
+      mobileBottomSheet.classList.remove(&quot;state-peek&quot;, &quot;state-half&quot;, &quot;state-full&quot;);
+      mobileBottomSheet.classList.add(`state-${newState}`);
+
+      const dock = document.getElementById(&quot;mobileFocusDock&quot;);
+      if (newState === &quot;full&quot;) {
+        dock.style.opacity = &quot;0&quot;;
+        dock.style.pointerEvents = &quot;none&quot;;
+      } else {
+        dock.style.opacity = &quot;1&quot;;
+        dock.style.pointerEvents = &quot;auto&quot;;
+      }
+    }
+
+    // 點擊頂部標題或把手切換狀態
+    document.getElementById(&quot;mSheetHead&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      if (sheetState === &quot;peek&quot;) setMobileSheetState(&quot;half&quot;);
+      else if (sheetState === &quot;half&quot;) setMobileSheetState(&quot;full&quot;);
+      else setMobileSheetState(&quot;peek&quot;);
+    });
+
+    document.getElementById(&quot;mSheetHandleBar&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      if (sheetState === &quot;peek&quot;) setMobileSheetState(&quot;half&quot;);
+      else setMobileSheetState(&quot;peek&quot;);
+    });
+
+    // 原生觸控手勢滑動支援 (Swipe Up / Down)
+    let touchStartY = 0;
+    const swipeHeaderArea = [document.getElementById(&quot;mSheetHandleBar&quot;), document.getElementById(&quot;mSheetHead&quot;)];
+    swipeHeaderArea.forEach(el =&gt; {
+      el.addEventListener(&quot;touchstart&quot;, (e) =&gt; {
+        touchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      el.addEventListener(&quot;touchend&quot;, (e) =&gt; {
+        const diffY = touchStartY - e.changedTouches[0].clientY;
+        if (diffY &gt; 40) {
+          // 向上滑動：展開下一階段
+          if (sheetState === &quot;peek&quot;) setMobileSheetState(&quot;half&quot;);
+          else if (sheetState === &quot;half&quot;) setMobileSheetState(&quot;full&quot;);
+        } else if (diffY &lt; -40) {
+          // 向下滑動：收合下一階段
+          if (sheetState === &quot;full&quot;) setMobileSheetState(&quot;half&quot;);
+          else if (sheetState === &quot;half&quot;) setMobileSheetState(&quot;peek&quot;);
+        }
+      }, { passive: true });
+    });
+
+    // ==========================================================================
+    // 陣營篩選功能 (桌面與手機同步過濾)
+    // ==========================================================================
+    function applyFactionFilter(filter) {
+      // 1. 同步按鈕 Active 樣式
+      document.querySelectorAll(&quot;.desktop-chip-btn, .mobile-chip-btn&quot;).forEach(btn =&gt; {
+        btn.classList.toggle(&quot;active&quot;, btn.getAttribute(&quot;data-filter&quot;) === filter);
+      });
+
+      // 2. 過濾 Marker
+      Object.entries(renderedMarkers).forEach(([id, item]) =&gt; {
+        if (filter === &quot;all&quot; || item.faction === filter) {
+          map.addLayer(item.marker);
+        } else {
+          map.removeLayer(item.marker);
+        }
+      });
+
+      // 3. 過濾顏色多邊形
+      Object.entries(renderedPolygons).forEach(([id, item]) =&gt; {
+        if (filter === &quot;all&quot;) {
+          item.layer.setStyle({ opacity: 0.85, fillOpacity: 0.22, weight: 2 });
+        } else if (item.faction === filter) {
+          item.layer.setStyle({ opacity: 1, fillOpacity: 0.4, weight: 3.5 });
+        } else {
+          item.layer.setStyle({ opacity: 0.15, fillOpacity: 0.03, weight: 1 });
+        }
+      });
+    }
+
+    document.querySelectorAll(&quot;.desktop-chip-btn, .mobile-chip-btn&quot;).forEach(btn =&gt; {
+      btn.addEventListener(&quot;click&quot;, () =&gt; {
+        const filter = btn.getAttribute(&quot;data-filter&quot;);
+        applyFactionFilter(filter);
+      });
+    });
+
+    // ==========================================================================
+    // 快捷選單與輔助工具按鈕綁定
+    // ==========================================================================
+    // 電腦版搜尋下拉
+    document.getElementById(&quot;desktopQuickSelect&quot;).addEventListener(&quot;change&quot;, (e) =&gt; {
+      if (e.target.value) showLocationDetail(e.target.value, true);
+    });
+
+    // 手機版搜尋下拉
+    document.getElementById(&quot;mobileQuickSelect&quot;).addEventListener(&quot;change&quot;, (e) =&gt; {
+      if (e.target.value) showLocationDetail(e.target.value, true);
+    });
+
+    // 手機版底部焦點 Dock 點擊
+    document.querySelectorAll(&quot;.dock-pill&quot;).forEach(pill =&gt; {
+      pill.addEventListener(&quot;click&quot;, () =&gt; {
+        const targetId = pill.getAttribute(&quot;data-id&quot;);
+        showLocationDetail(targetId, true);
+      });
+    });
+
+    // 手機版 FAB 按鈕
+    document.getElementById(&quot;mResetViewBtn&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      map.flyTo([25.0, 48.0], 4.2, { duration: 0.9 });
+    });
+
+    const mLegendModal = document.getElementById(&quot;mobileLegendModal&quot;);
+    document.getElementById(&quot;mToggleLegendBtn&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      mLegendModal.classList.toggle(&quot;show&quot;);
+    });
+    document.getElementById(&quot;mCloseLegendBtn&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      mLegendModal.classList.remove(&quot;show&quot;);
+    });
+
+    let currentTileKey = &quot;streets&quot;;
+    document.getElementById(&quot;mToggleTileBtn&quot;).addEventListener(&quot;click&quot;, () =&gt; {
+      Object.values(tileLayers).forEach(layer =&gt; map.removeLayer(layer));
+      if (currentTileKey === &quot;streets&quot;) {
+        tileLayers.satellite.addTo(map);
+        currentTileKey = &quot;satellite&quot;;
+      } else {
+        tileLayers.streets.addTo(map);
+        currentTileKey = &quot;streets&quot;;
+      }
+    });
+
+    // 電腦版底圖風格切換
+    document.querySelectorAll(&quot;.desktop-style-btn&quot;).forEach(btn =&gt; {
+      btn.addEventListener(&quot;click&quot;, () =&gt; {
+        document.querySelectorAll(&quot;.desktop-style-btn&quot;).forEach(b =&gt; b.classList.remove(&quot;active&quot;));
+        btn.classList.add(&quot;active&quot;);
+        const styleKey = btn.getAttribute(&quot;data-style&quot;);
+        Object.values(tileLayers).forEach(layer =&gt; map.removeLayer(layer));
+        tileLayers[styleKey].addTo(map);
+      });
+    });
+
+    // 視窗變化重繪地圖
+    window.addEventListener(&quot;resize&quot;, () =&gt; {
+      map.invalidateSize();
+    });
+
+    // 頁面初始化
+    document.addEventListener(&quot;DOMContentLoaded&quot;, () =&gt; {
+      // 依使用者螢幕大小智能推薦初始模式
+      const isMobileScreen = window.innerWidth &lt;= 768;
+      switchViewMode(isMobileScreen ? &quot;mobile&quot; : &quot;desktop&quot;);
+
+      // 預設展開伊朗情報
+      showLocationDetail(&quot;Iran&quot;, false);
+    });
+  &lt;/script&gt;
+&lt;script&gt;
+    window.addEventListener(&#x27;message&#x27;, function (event) {
+      if (event.source === parent &amp;&amp; event.data === &#x27;part4-map-visible&#x27;) {
+        window.dispatchEvent(new Event(&#x27;resize&#x27;));
+        setTimeout(function(){ window.dispatchEvent(new Event(&#x27;resize&#x27;)); }, 180);
+      }
+    });
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;" style="display:block;width:100%;height:calc(100dvh - 290px);min-height:720px;border:1px solid var(--border);border-radius:18px;background:#fff;overflow:hidden" loading="eager"></iframe>
+  </section>
+
+  <section id="slide-4" class="slide-section hidden fade-in space-y-5 mb-6">
+    <!-- 4 Regional Blocks Interactive Matrix -->
+    <div class="bg-[var(--card)] border border-[var(--border)] rounded-2xl p-5 shadow-sm">
+      <div class="pb-4 border-b border-[var(--border)]">
+        <span class="text-xs font-bold uppercase tracking-wider text-purple-500">Chapter 05 · Regional Power Restructuring &amp; Conclusion</span>
+        <h2 class="text-lg md:text-xl font-bold mt-0.5">四大區域板塊權力重組與《以西結書》38章預言對照</h2>
+        <p class="text-sm text-[var(--muted-foreground)] mt-1">
+          2023年10月7日加薩戰爭爆發後，美以與伊朗及其代理人開啟多線戰場，四大勢力板塊徹底洗牌
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+        <!-- Block 1: 伊朗與代理人 -->
+        <div class="p-4 rounded-xl border border-rose-500/30 bg-rose-500/5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-rose-600 dark:text-rose-400">一、伊朗與「什葉派之弧」重創</h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 font-semibold">霸權退縮</span>
+          </div>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <strong>1. 哈瑪斯與真主黨失去戰略牽制力</strong>：哈瑪斯從具備準國家治理與成建制火箭軍的政權，被打散為加薩<strong>碎片化游擊武裝</strong>；曾被視為「王冠上明珠」（擁十餘萬枚飛彈）的黎巴嫩真主黨，在2024下半年呼叫器爆破、高層（含納斯魯拉）團滅與地面清剿後，指管與重型武力大幅萎縮，即使在2026年美以對伊戰爭中試圖重啟戰端，也無力構成生存級別牽制。
+            </li>
+            <li>
+              <strong>2. 敘利亞阿薩德政權垮台（2024.12）</strong>：因真主黨回防、伊朗自顧不暇、俄羅斯深陷烏克蘭，敘利亞反對派（以<strong>沙姆解放組織 HTS</strong> 為首）在十餘天內推翻統治敘利亞 54 年的阿薩德政權。
+            </li>
+            <li>
+              <strong>3. 伊朗轉為「保衛政權存續」</strong>：美以連番空襲摧毀伊朗本土空防與重創核設施，迫使其從「輸出革命、爭奪霸權」轉為保命（無差別襲擊波斯灣美軍基地、民用設施與封鎖荷莫茲海峽）。
+            </li>
+          </ul>
+        </div>
+
+        <!-- Block 2: 域外大國 -->
+        <div class="p-4 rounded-xl border border-sky-500/30 bg-sky-500/5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-sky-600 dark:text-sky-400">二、域外大國（俄、中、美）消長</h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-sky-500/20 text-sky-500 font-semibold">投射力檢驗</span>
+          </div>
+          <ul class="space-y-2.5 text-sm">
+            <li class="p-2.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+              <strong>俄羅斯（大幅衰退）</strong>：因烏克蘭戰爭耗盡資源，無力保住敘利亞阿薩德政權與伊朗防空網，在東地中海的戰略投射能力大幅衰退。
+            </li>
+            <li class="p-2.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+              <strong>中國（安全保護傘缺位）</strong>：雖在外交與能源貿易上維持影響力，但在高強度熱戰中無法提供實質安全保護傘。
+            </li>
+            <li class="p-2.5 rounded-lg bg-[var(--card)] border border-[var(--border)]">
+              <strong>美國（唯一外部霸權但資源吃緊）</strong>：透過直接軍事介入與防空協防，證明仍是中東唯一具備武力投射能力的外部霸權，但也面臨<strong>彈藥消耗過快</strong>及<strong>資源有限</strong>的窘境。
+            </li>
+          </ul>
+        </div>
+
+        <!-- Block 3: 海灣國家 -->
+        <div class="p-4 rounded-xl border border-amber-500/30 bg-amber-500/5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-amber-600 dark:text-amber-400">三、海灣國家與《麥加協議》誕生</h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-amber-500/20 text-amber-500 font-semibold">同盟轉向</span>
+          </div>
+          <p class="text-sm leading-relaxed">
+            當伊朗開始無差別向<strong>沙烏地、阿聯、巴林、科威特與卡達</strong>境內的美軍基地及煉油廠發射飛彈與無人機時，海灣國家發現：過度依賴美國的安全保護傘，有時不但難以獲得強力支援，反而還可能<strong>被美以對伊朗的軍事行動拖下水</strong>。
+          </p>
+          <div class="mt-3 p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] text-sm">
+            <strong>戰略自主轉向</strong>：沙烏地阿拉伯開始在戰略同盟上轉向<strong>土耳其</strong>以及擁核的<strong>巴基斯坦</strong>——這正是<strong>《麥加協議》</strong>出現的核心原因。
+          </div>
+        </div>
+
+        <!-- Block 4: 土耳其 -->
+        <div class="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-base font-bold text-emerald-600 dark:text-emerald-400">四、土耳其：填補真空與伊斯蘭集體防衛</h3>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 font-semibold">新興霸權</span>
+          </div>
+          <ul class="space-y-2 text-sm">
+            <li>
+              <strong>1. 政教合一與反以立場</strong>：艾爾多安（Recep Erdoğan）政府逐漸右傾，愈發支持國內政教合一政治情勢，連帶改變過往對以色列的溫和立場。
+            </li>
+            <li>
+              <strong>2. 填補敘利亞權力真空</strong>：阿薩德垮台後，土耳其扶持親土政府，並在敘利亞境內<strong>駐紮 20,000 多名駐軍</strong>，直接逼近以色列北方並引發以方強烈抗議。
+            </li>
+            <li>
+              <strong>3. 構築伊斯蘭集體防衛體系</strong>：《麥加協議》讓艾爾多安將影響力直接投射到波斯灣與紅海；透過與沙烏地結盟，土耳其不僅獲得急需的<strong>海灣資金挹注</strong>，更在戰略上構築了一個足以與<strong>「美以軍事霸權」平起平坐的伊斯蘭集體防衛體系</strong>。
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Final Conclusion: Ezekiel 38 Comparison -->
+    <div class="bg-[var(--card)] border-2 border-purple-500/40 rounded-2xl p-5 shadow-sm">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-500">
+            講義總結洞見 · Geopolitics &amp; Ezekiel 38
+          </span>
+          <h3 class="text-lg font-bold mt-2">
+            總結：10月7日後的區域權力重組，為何越來越貼近《以西結書》38章的預言？
+          </h3>
+          <p class="text-sm text-[var(--muted-foreground)] mt-1">
+            「10月7日之後，因為以色列的戰略轉向，我們看到整個區域的權力結構開始改變，現在整個中東的戰略情勢似乎越來越貼近以西結書38章的預言。」
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 pt-4 border-t border-[var(--border)] text-sm">
+        <div class="p-3.5 rounded-xl bg-[var(--secondary)] border border-[var(--border)]">
+          <div class="text-xs font-bold text-purple-500">北方強權南下（陀迦瑪 / 米設 / 土巴）</div>
+          <p class="mt-1 text-xs leading-relaxed">
+            土耳其（傳統解經對應北方勢力）立場轉趨強硬，並在阿薩德垮台後直接駐軍敘利亞逾 2 萬人，軍事力量推進至以色列北方邊境。
+          </p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[var(--secondary)] border border-[var(--border)]">
+          <div class="text-xs font-bold text-purple-500">波斯（伊朗）與多國合縱</div>
+          <p class="mt-1 text-xs leading-relaxed">
+            伊朗（波斯）在代理人瓦解與本土受創後，為保衛政權存續尋求突圍；而土耳其透過《麥加協議》整合海灣資金與伊斯蘭集體防衛體系，重塑中東戰略結構。
+          </p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-[var(--secondary)] border border-[var(--border)]">
+          <div class="text-xs font-bold text-purple-500">以色列「攻勢防衛」與孤立風險</div>
+          <p class="mt-1 text-xs leading-relaxed">
+            以色列仰賴強大武力進行多線持久戰，美國雖提供協防但面臨彈藥與資源極限，使中東呈現「美以軍事霸權」與「新興伊斯蘭防衛軸線」並存的新格局。
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    let currentSlide = 0;
+    let viewMode = 'slide'; // 'slide' or 'all'
+    const totalSlides = 5;
+
+    const pillarDetails = [
+      {
+        tag: '戰略 01 深度檢視 · 拒止性嚇阻 (Deterrence of Denial)',
+        text: '延伸至地底下的高科技隔離牆（感測器、遠距遙控機槍塔與雷達）、鐵穹防禦系統與精準打擊武器。盲點：過度依賴被動科技防線，當哈瑪斯以無人機與飽和突襲破壞感測通訊節點時，防線瞬間遭突破。'
+      },
+      {
+        tag: '戰略 02 深度檢視 · 割草戰略 (Mowing the Grass)',
+        text: '承認無法透過政治或軍事手段徹底消滅哈瑪斯意識形態，採取「只壓制、不根除」的週期性精準打擊（定點清除、空襲、毀軍火庫）。盲點：將長期生存威脅當作可定期修剪的風險管理，給予敵方暗中蓄力發動致命突襲的時間。'
+      },
+      {
+        tag: '戰略 03 深度檢視 · 經濟誘因 (Economic Incentives)',
+        text: '納坦雅胡政府期望用工作證與卡達資金引導哈瑪斯走向「地方政府」，甚至在 2023年9月（突襲前一個月）主動要求卡達加碼金援平息騷亂。盲點：誤以為經濟利益能改變宗教與意識形態極端組織的終極毀滅意圖。'
+      }
+    ];
+
+    const threatAnswers = [
+      {
+        controlled: true,
+        badge: '✅ 成功管控',
+        desc: '以色列在經濟、科技與正規軍事綜合國力上遠超周邊非國家行為體，長期維持絕對優勢。'
+      },
+      {
+        controlled: true,
+        badge: '✅ 成功管控',
+        desc: '透過地下隔離牆、緩衝區與感測監控網，過去二十年成功限制了地理毗鄰帶來的日常滲透。'
+      },
+      {
+        controlled: true,
+        badge: '✅ 表面管控',
+        desc: '藉由「割草戰略」定期摧毀軍火庫與鐵穹攔截，以色列認為已成功管控敵方的攻擊能力上限。'
+      },
+      {
+        controlled: false,
+        badge: '❌ 徹底失算（致命盲點）',
+        desc: '誤以為哈瑪斯意圖是「經濟與生存」；10/7後才驚覺其真正意圖是消滅以色列（From the river to the sea）！'
+      }
+    ];
+
+    const mapNodesData = {
+      iran: {
+        badge: '什葉派軸心・本土受創',
+        title: '伊朗 (Iran)：從爭奪霸權退縮至保衛政權',
+        subtitle: 'Iran: Strategic Retreat to Regime Survival (2024–2026)',
+        items: [
+          { title: '本土空防與核設施遭重創', color: 'text-rose-500', text: '2024年以伊首次本土飛彈互擊；2024至今美以連番空襲摧毀伊朗大部分本土空防能力，核設施亦遭重創。' },
+          { title: '戰略核心被迫轉向', color: 'text-amber-500', text: '從過去的「輸出革命、爭奪區域霸權」，退縮為「保衛政權存續」——無差別襲擊波斯灣美軍基地、民用煉油廠與封鎖荷莫茲海峽。' }
+        ]
+      },
+      lebanon: {
+        badge: '北方戰線・王冠明珠黯淡',
+        title: '黎巴嫩真主黨 (Hezbollah)：指管與重武力萎縮',
+        subtitle: 'Hezbollah: Pager Explosions, Decapitation & Ground Sweep',
+        items: [
+          { title: '打破「對等報復」舊規則', color: 'text-amber-500', text: '為解決以色列北方數萬居民撤離危機，以軍不再容忍真主黨精銳「拉德萬部隊」駐紮邊境。' },
+          { title: '2024下半年呼叫器爆破與斬首', color: 'text-rose-500', text: '遭遇呼叫器集體引爆、高層（含納斯魯拉）團滅與地面清剿後，十餘萬枚飛彈與指管體系大幅萎縮，2026年已無力對以構成生存級牽制。' }
+        ]
+      },
+      syria: {
+        badge: '地緣斷鏈・政權更迭',
+        title: '敘利亞 (Syria)：阿薩德54年政權十餘天垮台',
+        subtitle: 'Fall of Assad (Dec 2024) & Turkish Military Presence',
+        items: [
+          { title: '2024年12月閃電變天', color: 'text-emerald-500', text: '因真主黨主力回防黎巴嫩、伊朗自顧不暇、俄羅斯深陷烏克蘭戰場，敘利亞反對派（以沙姆解放組織 HTS 為首）在十餘天內推翻統治54年的阿薩德政權。' },
+          { title: '土耳其填補真空駐軍 20,000+', color: 'text-sky-500', text: '土耳其扶持親土新政府，並駐紮逾2萬名駐軍，引發以色列強烈抗議。' }
+        ]
+      },
+      israel: {
+        badge: '戰略核心・攻勢防衛',
+        title: '以色列 & 加薩：從衝突管控到「根除攻擊能力」',
+        subtitle: 'Israel & Gaza: Capability Eradication & 2025 National Security Law',
+        items: [
+          { title: '哈瑪斯碎片化與游擊化', color: 'text-sky-500', text: '哈瑪斯從具備準國家治理能力與成建制火箭軍的政權，被打散為僅能在加薩進行游擊戰的碎片化武裝。' },
+          { title: '2025《國家安全戰略法》', color: 'text-rose-500', text: '擴編裝甲與步兵師、延長役期，將「只要敵方具備物理威脅能力即主動摧毀」的攻勢防衛教義法制化。' }
+        ]
+      },
+      saudi: {
+        badge: '海灣轉向・麥加協議',
+        title: '沙烏地阿拉伯與海灣國家：催生《麥加協議》',
+        subtitle: 'Saudi Arabia & The Mecca Accord (Saudi-Turkey-Pakistan Axis)',
+        items: [
+          { title: '美軍保護傘的信任危機', color: 'text-amber-500', text: '伊朗無差別向沙烏地、阿聯、巴林、科威特與卡達境內美軍基地及煉油廠發射飛彈與無人機，海灣國家發現依賴美國反而易被美以對伊行動拖下水。' },
+          { title: '轉向土耳其與擁核巴基斯坦', color: 'text-emerald-500', text: '沙烏地在戰略同盟上轉向土耳其與巴基斯坦，簽署《麥加協議》，以海灣資金挹注換取伊斯蘭集體防衛。' }
+        ]
+      },
+      turkey: {
+        badge: '北方新霸權・政教合一右傾',
+        title: '土耳其 (Turkey)：構築與美以平起平坐的防衛體系',
+        subtitle: 'Erdoğan’s Neo-Ottoman Projection & Islamic Collective Defense',
+        items: [
+          { title: '國內右傾與反以立場', color: 'text-emerald-500', text: '艾爾多安政府逐漸右傾並支持國內政教合一情勢，改變過往對以色列的溫和立場。' },
+          { title: '投射波斯灣與紅海', color: 'text-amber-500', text: '除駐軍敘利亞2萬餘人外，更透過《麥加協議》獲海灣資金挹注，將影響力投射至波斯灣與紅海，與美以軍事霸權分庭抗禮。' }
+        ]
+      },
+      gulf: {
+        badge: '前線衝擊・能源與基地',
+        title: '巴林 / 卡達 / 阿聯 / 科威特：承受無差別報復',
+        subtitle: 'Gulf States Under Iranian Missile & Drone Strikes',
+        items: [
+          { title: '美軍基地與煉油廠遇襲', color: 'text-rose-500', text: '伊朗為保衛政權存續，對波斯灣沿岸美軍基地與民用能源設施發動無差別飛彈與無人機襲擊，迫使海灣國家尋求多元安全保障。' }
+        ]
+      },
+      hormuz: {
+        badge: '全球能源咽喉',
+        title: '荷莫茲海峽 (Strait of Hormuz)：封鎖與反封鎖',
+        subtitle: 'Strategic Maritime Chokepoint',
+        items: [
+          { title: '伊朗政權保衛戰籌碼', color: 'text-amber-500', text: '在本土空防與核設施遭重創後，威脅封鎖荷莫茲海峽與襲擊商船成為伊朗最後的非對稱威懾手段。' }
+        ]
+      },
+      pakistan: {
+        badge: '核武後盾・麥加協議',
+        title: '巴基斯坦 (Pakistan)：提供核保護傘潛力',
+        subtitle: 'Nuclear-Armed Partner in the Mecca Accord',
+        items: [
+          { title: '沙烏地戰略轉向的關鍵拼圖', color: 'text-emerald-500', text: '作為唯一擁有核武的穆斯林國家，巴基斯坦與沙烏地、土耳其共同構成《麥加協議》安全架構的重要支柱。' }
+        ]
+      },
+      yemen: {
+        badge: '紅海戰線',
+        title: '葉門胡塞武裝 (Houthi Rebels)：紅海襲擾',
+        subtitle: 'Red Sea Proxy Front',
+        items: [
+          { title: '代理人戰爭的一環', color: 'text-rose-500', text: '過去以伊在紅海與敘利亞進行代理人戰爭，10月7日後胡塞武裝持續襲擾紅海航運，促成土耳其與沙烏地透過《麥加協議》強化紅海安全投射。' }
+        ]
+      },
+      iraq: {
+        badge: '什葉派多數・內部撕裂',
+        title: '伊拉克 (Iraq)：美伊夾縫中的破碎地帶',
+        subtitle: 'Shia Majority, Deeply Divided',
+        items: [
+          { title: '什葉派民兵與美以空防走廊', color: 'text-amber-500', text: '雖為什葉派多數並有親伊民兵，但在2024–2026美以對伊朗本土的連番空襲中，已無法阻擋美以空中優勢。' }
+        ]
+      },
+      egypt: {
+        badge: '蘇伊士運河・謹慎中立',
+        title: '埃及 (Egypt)：維持謹慎中立與守護運河',
+        subtitle: 'Cautious Neutrality & Securing Suez',
+        items: [
+          { title: '邊境管控與航道安全', color: 'text-sky-500', text: '在加薩戰爭與紅海動盪中採取謹慎中立，優先確保西奈半島邊境穩定與蘇伊士運河營收。' }
+        ]
+      }
+    };
+
+    function refreshPart4Map() {
+      const frame = document.getElementById('part4-map-frame');
+      const slide = document.getElementById('slide-3');
+      if (!frame || !slide || slide.classList.contains('hidden')) return;
+      const notify = () => frame.contentWindow && frame.contentWindow.postMessage('part4-map-visible', '*');
+      requestAnimationFrame(() => { notify(); setTimeout(notify, 220); });
+    }
+
+    function updateNavHighlight() {
+      for (let i = 0; i < totalSlides; i++) {
+        const tab = document.getElementById(`nav-tab-${i}`);
+        if (viewMode === 'slide' && i === currentSlide) {
+          tab.className = 'nav-tab text-left p-2.5 rounded-xl border-2 border-[var(--primary)] bg-[var(--secondary)] shadow-sm transition-all';
+        } else {
+          tab.className = 'nav-tab text-left p-2.5 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:bg-[var(--secondary)]/60 transition-all';
+        }
+      }
+      document.getElementById('slide-counter').textContent = `${currentSlide + 1} / ${totalSlides}`;
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      const btnSlide = document.getElementById('btn-mode-slide');
+      const btnAll = document.getElementById('btn-mode-all');
+      const controls = document.getElementById('slide-controls');
+
+      if (mode === 'slide') {
+        btnSlide.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm';
+        btnAll.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)]';
+        controls.classList.remove('hidden');
+        for (let i = 0; i < totalSlides; i++) {
+          const el = document.getElementById(`slide-${i}`);
+          if (i === currentSlide) el.classList.remove('hidden');
+          else el.classList.add('hidden');
+        }
+      } else {
+        btnAll.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm';
+        btnSlide.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all text-[var(--muted-foreground)] hover:text-[var(--foreground)]';
+        controls.classList.add('hidden');
+        for (let i = 0; i < totalSlides; i++) {
+          document.getElementById(`slide-${i}`).classList.remove('hidden');
+        }
+      }
+      updateNavHighlight();
+      refreshPart4Map();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      if (viewMode === 'slide') {
+        for (let i = 0; i < totalSlides; i++) {
+          const el = document.getElementById(`slide-${i}`);
+          if (i === currentSlide) el.classList.remove('hidden');
+          else el.classList.add('hidden');
+        }
+        updateNavHighlight();
+        refreshPart4Map();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        document.getElementById(`slide-${index}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        if (index === 3) refreshPart4Map();
+      }
+    }
+
+    function nextSlide() {
+      goToSlide((currentSlide + 1) % totalSlides);
+    }
+
+    function prevSlide() {
+      goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+    }
+
+    function highlightDoctrine(which) {
+      const pre = document.getElementById('doctrine-pre-box');
+      const post = document.getElementById('doctrine-post-box');
+      if (which === 'pre') {
+        pre.style.opacity = '1';
+        pre.style.transform = 'scale(1.02)';
+        post.style.opacity = '0.45';
+        post.style.transform = 'scale(0.98)';
+      } else if (which === 'post') {
+        post.style.opacity = '1';
+        post.style.transform = 'scale(1.02)';
+        pre.style.opacity = '0.45';
+        pre.style.transform = 'scale(0.98)';
+      } else {
+        pre.style.opacity = '1';
+        pre.style.transform = 'scale(1)';
+        post.style.opacity = '1';
+        post.style.transform = 'scale(1)';
+      }
+    }
+
+    function selectPillar(idx) {
+      for (let i = 0; i < 3; i++) {
+        const card = document.getElementById(`pillar-card-${i}`);
+        if (i === idx) {
+          card.className = 'cursor-pointer rounded-xl p-4 border-2 border-amber-500 bg-amber-500/5 transition-all';
+        } else {
+          card.className = 'cursor-pointer rounded-xl p-4 border border-[var(--border)] bg-[var(--secondary)]/40 hover:border-amber-500/50 transition-all';
+        }
+      }
+      document.getElementById('pillar-detail-tag').textContent = pillarDetails[idx].tag;
+      document.getElementById('pillar-detail-text').textContent = pillarDetails[idx].text;
+    }
+
+    function toggleThreatCard(idx) {
+      const card = document.getElementById(`threat-card-${idx}`);
+      const badge = document.getElementById(`threat-badge-${idx}`);
+      const desc = document.getElementById(`threat-desc-${idx}`);
+      const ans = threatAnswers[idx];
+
+      if (ans.controlled) {
+        card.className = 'cursor-pointer p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 transition-all';
+        badge.className = 'text-xs px-2 py-0.5 rounded bg-emerald-500 text-white font-bold';
+      } else {
+        card.className = 'cursor-pointer p-4 rounded-xl border-2 border-rose-500 bg-rose-500/15 transition-all';
+        badge.className = 'text-xs px-2 py-0.5 rounded bg-rose-500 text-white font-bold';
+      }
+      badge.textContent = ans.badge;
+      desc.textContent = ans.desc;
+      desc.className = 'text-xs mt-3 text-[var(--foreground)] font-medium';
+    }
+
+    function revealAllThreatElements() {
+      for (let i = 0; i < 4; i++) {
+        toggleThreatCard(i);
+      }
+    }
+
+    function selectMapNode(key) {
+      const data = mapNodesData[key];
+      if (!data) return;
+      document.getElementById('map-node-badge').textContent = data.badge;
+      document.getElementById('map-node-title').textContent = data.title;
+      document.getElementById('map-node-subtitle').textContent = data.subtitle;
+
+      const body = document.getElementById('map-node-body');
+      body.innerHTML = data.items.map(item => `
+        <div class="p-3 rounded-xl bg-[var(--card)] border border-[var(--border)] fade-in">
+          <div class="text-xs font-bold ${item.color}">${item.title}</div>
+          <p class="text-xs mt-1 text-[var(--foreground)] leading-relaxed">${item.text}</p>
+        </div>
+      `).join('');
+    }
+
+    function setMapEra(era) {
+      const btnPost = document.getElementById('map-era-post');
+      const btnPre = document.getElementById('map-era-pre');
+      const syriaPoly = document.getElementById('poly-syria');
+      const shiaArc = document.getElementById('shia-crescent-arc');
+      const shiaLabel = document.getElementById('shia-arc-label');
+      const meccaArc = document.getElementById('mecca-accord-arc');
+      const meccaLabel = document.getElementById('mecca-arc-label');
+      const mapBanner = document.getElementById('map-title-banner');
+
+      if (era === 'pre') {
+        btnPre.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]';
+        btnPost.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]';
+        syriaPoly.setAttribute('fill', '#9f1239');
+        syriaPoly.setAttribute('stroke', '#f43f5e');
+        shiaArc.setAttribute('stroke-dasharray', 'none');
+        shiaArc.setAttribute('stroke-width', '5');
+        shiaArc.setAttribute('opacity', '0.95');
+        shiaLabel.textContent = '2023.10前「什葉派之弧」(Shia Crescent)：伊-敘-黎-加薩完整連通';
+        meccaArc.setAttribute('opacity', '0');
+        meccaLabel.setAttribute('opacity', '0');
+        mapBanner.textContent = 'PRE-OCT 7, 2023: THE SHIA CRESCENT AT ITS PEAK';
+      } else {
+        btnPost.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]';
+        btnPre.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)]';
+        syriaPoly.setAttribute('fill', '#15803d');
+        syriaPoly.setAttribute('stroke', '#86efac');
+        shiaArc.setAttribute('stroke-dasharray', '7,5');
+        shiaArc.setAttribute('stroke-width', '4');
+        shiaArc.setAttribute('opacity', '0.65');
+        shiaLabel.textContent = '什葉派之弧斷鏈：阿薩德垮台・真主黨與哈瑪斯重創';
+        meccaArc.setAttribute('opacity', '0.85');
+        meccaLabel.setAttribute('opacity', '1');
+        mapBanner.textContent = 'AXIS OF THE SHIA-SUNNI DIVIDE (MARCH 2026)';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (viewMode !== 'slide') return;
+      if (e.key === 'ArrowRight') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    updateNavHighlight();
+  </script>
+</body>
+</html>
